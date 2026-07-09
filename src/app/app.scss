@@ -1,0 +1,10 @@
+/* Shell de la página: layout de pantalla completa sin scroll (mientras
+   solo exista la sección de inicio, ver CLAUDE.md). Todo lo demás vive
+   en los componentes (header, hero, footer). */
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  width: 100%;
+  overflow-x: hidden;
+}
