@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { LoaderComponent } from './components/loader/loader.component';
 import { HomeComponent } from './pages/home/home.component';
 
 @Component({
   selector: 'app-root',
-  imports: [HeaderComponent, HomeComponent, FooterComponent],
+  imports: [LoaderComponent, HeaderComponent, HomeComponent, FooterComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

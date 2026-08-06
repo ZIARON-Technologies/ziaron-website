@@ -1,0 +1,290 @@
+// display: contents porque este componente no debe participar del layout
+// flex del shell (ver CLAUDE.md, "display: contents en los componentes del
+// shell") — el <div class="loader-overlay"> real es position:fixed.
+:host {
+  display: contents;
+}
+
+.loader-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  opacity: 1;
+  transition: opacity 0.5s ease;
+
+  &--hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.loader-mark {
+  overflow: visible;
+}
+
+// Los "hoyos" de los nodos y del socket del Nexus toman el color de fondo
+// activo (--bg cambia con el tema, ver src/tailwind.css :root/.dark), para
+// que el loader sea theme-adaptive sin generar variantes separadas.
+.loader-hole {
+  fill: var(--bg);
+}
+
+.loader-orb {
+  transform-origin: 130px 130px;
+  animation: loader-pulse 1.6s ease-in-out infinite;
+}
+
+// Todo comparte el MISMO ciclo de 1.4s (bastante más corto/rápido que antes):
+// el anillo crece casi de inmediato (8%), la Z se dibuja rápido y en línea
+// recta (`linear`) entre el 8% y el 38% — 30% de 1.4s = 0.42s, un dibujado
+// veloz y de un vistazo — y desde el 38% hasta el 85% queda la Z completa +
+// los 4 nodos visibles (0.66s, bastante tiempo), recién ahí se desvanece.
+$loader-cycle: 1.4s;
+
+// La Z misma (no una línea agregada encima): partida en sus dos mitades
+// naturales, cada una se dibuja hacia su nodo de esquina — una hacia el
+// nodo 2 y luego el nodo 1 (arriba), la otra hacia el nodo 3 y luego el
+// nodo 4 (abajo). Arranca justo en el borde del anillo exterior (ver el
+// `d` de cada path en el HTML). Largo real de cada mitad (diagonal desde
+// el borde del anillo + barra hasta el nodo) calculado a mano — ambas
+// mitades miden lo mismo por simetría: ≈249.7 unidades.
+.loader-stroke-half {
+  stroke-dasharray: 249.7;
+  stroke-dashoffset: 249.7;
+  animation: loader-comet-draw $loader-cycle linear infinite;
+}
+
+// Anillo pulsante sobre el Nexus — la animación que pasaste tal cual
+// (.loader / .loader:after): uno "respira" (pulse) y el otro nace de escala
+// 0 y crece hasta su tamaño real (burst, hasta el radio 34 = el punto exacto
+// donde arrancan ahora las dos mitades de la Z — ver el `d` de cada path).
+.loader-nexus-pulse,
+.loader-nexus-burst {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+// El "respirar" del anillo va SUELTO de $loader-cycle, a su propio ritmo fijo
+// (1s, el de tu snippet original) — antes estaba atado al ciclo del trazo, y
+// al acelerar ese ciclo (2s→1.4s) el respirar se aceleró con él y dejó de
+// sentirse igual. Ahora es independiente pase lo que pase con la velocidad
+// del dibujado.
+.loader-nexus-pulse {
+  animation: loader-nexus-pulse 1s linear infinite;
+}
+
+.loader-nexus-burst {
+  animation: loader-nexus-burst $loader-cycle ease-out infinite;
+}
+
+// Los nodos de las esquinas ya no están fijos: aparecen justo cuando el
+// trazo los alcanza. "--mid" es el nodo del quiebre diagonal→barra (nodo 2
+// y nodo 3, alcanzado a los ~38% del ciclo — la fracción de la diagonal
+// dentro de cada mitad); "--end" es el nodo final de cada mitad (nodo 1 y
+// nodo 4), que aparece exactamente cuando la Z termina de dibujarse (65%),
+// sin retraso — así se ven "juntos", la Z completa con sus 4 nodos.
+.loader-node {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  transform: scale(0);
+}
+
+.loader-node--mid {
+  animation: loader-node-pop-mid $loader-cycle linear infinite;
+}
+
+.loader-node--end {
+  animation: loader-node-pop-end $loader-cycle linear infinite;
+}
+
+// Flash de impacto: un pequeño eco de la colisión del Nexus, pero en cada
+// nodo, justo en el instante en que el trazo llega — un anillo que aparece
+// del tamaño del nodo, se expande un poco y se desvanece rápido. Así el
+// final no se siente estático, sin necesidad de que el nodo en sí seguir
+// animándose todo el rato que queda visible.
+.loader-node-impact {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  transform: scale(1);
+}
+
+.loader-node-impact--mid {
+  animation: loader-node-impact-mid $loader-cycle linear infinite;
+}
+
+.loader-node-impact--end {
+  animation: loader-node-impact-end $loader-cycle linear infinite;
+}
+
+@keyframes loader-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes loader-comet-draw {
+  0%,
+  8% {
+    stroke-dashoffset: 249.7; // oculto hasta el instante de la colisión (casi nada de espera)
+    opacity: 0;
+  }
+  8.01% {
+    stroke-dashoffset: 249.7;
+    opacity: 1; // aparece de inmediato al colisionar con el anillo
+  }
+  38% {
+    stroke-dashoffset: 0; // dibujado rápido (8%→38%, 0.42s) hasta el nodo final
+    opacity: 1;
+  }
+  85% {
+    stroke-dashoffset: 0;
+    opacity: 1; // se mantiene completa y visible bastante tiempo, junto a los nodos
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0; // se desvanece antes de reiniciar el ciclo
+  }
+}
+
+@keyframes loader-nexus-pulse {
+  0%,
+  60%,
+  100% {
+    transform: scale(1);
+  }
+  80% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes loader-nexus-burst {
+  0% {
+    transform: scale(0);
+  }
+  8%,
+  100% {
+    transform: scale(1); // llega a su tamaño real (radio 34) justo cuando la Z arranca
+  }
+}
+
+@keyframes loader-node-pop-mid {
+  0%,
+  18% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  18.01% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  85% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+@keyframes loader-node-pop-end {
+  0%,
+  38% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  38.01% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  85% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+@keyframes loader-node-impact-mid {
+  0%,
+  18% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  18.01% {
+    opacity: 1;
+    transform: scale(0.9); // el flash nace del tamaño del nodo…
+  }
+  27% {
+    opacity: 0;
+    transform: scale(1.7); // …y se expande hacia afuera mientras se desvanece
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+@keyframes loader-node-impact-end {
+  0%,
+  38% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  38.01% {
+    opacity: 1;
+    transform: scale(0.9);
+  }
+  47% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader-orb {
+    animation: none;
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .loader-stroke-half {
+    animation: none;
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+
+  .loader-nexus-pulse,
+  .loader-nexus-burst {
+    animation: none;
+  }
+
+  .loader-node {
+    animation: none;
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .loader-node-impact {
+    animation: none;
+    opacity: 0;
+  }
+}

@@ -1,0 +1,116 @@
+@if (visible()) {
+  <div
+    class="loader-overlay"
+    [class.loader-overlay--hidden]="hidden()"
+    role="status"
+    aria-label="Cargando ZIARON Technologies"
+  >
+    <svg class="loader-mark" viewBox="0 0 260 260" width="168" height="168" xmlns="http://www.w3.org/2000/svg">
+      <!-- La Z en sí (no una línea agregada aparte): se parte en sus dos
+           mitades naturales y cada mitad se dibuja hacia su nodo de
+           esquina — mismo grosor (21.8) y trazado que el original, solo
+           que ahora ESA línea es la que anima, no una superpuesta. Arriba:
+           nodo 2 → nodo 1. Abajo: nodo 3 → nodo 4. El punto de partida de
+           cada mitad NO es el centro exacto del Nexus sino el borde del
+           anillo exterior (radio 34, mismo radio que loader-nexus-pulse/
+           burst más abajo) — la animación "choca" con el anillo cuando
+           termina de crecer y desde ahí sale la Z (ver loader-comet-draw
+           en el SCSS, que retrasa el dibujado hasta ese instante).
+           `pathLength="100"` normaliza el largo de cada mitad para el
+           dashoffset. Colores al azar de la paleta de marca (ver
+           loader.component.ts). -->
+      <path
+        class="loader-stroke-half"
+        d="M154.042 105.958 L213.092 46.9077 H46.9077"
+        fill="none"
+        [attr.stroke]="ringColor1"
+        stroke-width="21.8414"
+        stroke-linecap="butt"
+        stroke-linejoin="round"
+      />
+      <path
+        class="loader-stroke-half"
+        d="M105.958 154.042 L46.9077 213.092 H213.092"
+        fill="none"
+        [attr.stroke]="ringColor2"
+        stroke-width="21.8414"
+        stroke-linecap="butt"
+        stroke-linejoin="round"
+      />
+
+      <!-- Los nodos ya no están fijos: cada uno aparece justo cuando el
+           trazo de arriba/abajo lo alcanza. Nodo 1 (LT) y nodo 4 (RB) son
+           el final de cada mitad ("--end"); nodo 2 (RT) y nodo 3 (LB) son
+           el punto medio, donde la diagonal se une con la barra ("--mid").
+           Mismo ciclo que el trazo, para que estén sincronizados. -->
+      <g class="loader-node loader-node--end">
+        <circle cx="46.9078" cy="46.9078" r="20.8918" fill="#8B5CF6" />
+        <circle cx="46.9078" cy="46.9074" r="10.4459" class="loader-hole" />
+        <circle cx="46.9078" cy="46.908" r="4.17835" fill="#8B5CF6" />
+      </g>
+      <g class="loader-node loader-node--mid">
+        <circle cx="213.092" cy="46.9078" r="20.8918" fill="#6366F1" />
+        <circle cx="213.092" cy="46.9074" r="10.4459" class="loader-hole" />
+        <circle cx="213.092" cy="46.908" r="4.17835" fill="#6366F1" />
+      </g>
+      <g class="loader-node loader-node--mid">
+        <circle cx="46.9078" cy="213.092" r="20.8918" fill="#4F7FFF" />
+        <circle cx="46.9078" cy="213.092" r="10.4459" class="loader-hole" />
+        <circle cx="46.9078" cy="213.092" r="4.17835" fill="#4F7FFF" />
+      </g>
+      <g class="loader-node loader-node--end">
+        <circle cx="213.092" cy="213.092" r="20.8918" fill="#06B6D4" />
+        <circle cx="213.092" cy="213.092" r="10.4459" class="loader-hole" />
+        <circle cx="213.092" cy="213.092" r="4.17835" fill="#06B6D4" />
+      </g>
+
+      <!-- Flash de impacto: FUERA de los grupos de arriba a propósito — si
+           viven dentro de un <g> que ya se está escalando de 0 a 1 (la
+           aparición del nodo), el flash queda "aplastado" por esa misma
+           transformación del padre y no se ve bien. Aquí cada uno tiene su
+           propia animación independiente, en blanco (no del color del
+           nodo) para que se note como un destello real y no se pierda
+           contra el disco del mismo color. -->
+      <circle class="loader-node-impact loader-node-impact--end" cx="46.9078" cy="46.9078" r="20.8918" fill="none" stroke="white" stroke-width="3" />
+      <circle class="loader-node-impact loader-node-impact--mid" cx="213.092" cy="46.9078" r="20.8918" fill="none" stroke="white" stroke-width="3" />
+      <circle class="loader-node-impact loader-node-impact--mid" cx="46.9078" cy="213.092" r="20.8918" fill="none" stroke="white" stroke-width="3" />
+      <circle class="loader-node-impact loader-node-impact--end" cx="213.092" cy="213.092" r="20.8918" fill="none" stroke="white" stroke-width="3" />
+
+      <circle cx="130" cy="130" r="18.9925" class="loader-hole" stroke="#6366F1" stroke-width="1.89925" />
+      <circle class="loader-orb" cx="130" cy="130" r="12.3451" fill="url(#loaderOrb)" />
+      <circle cx="130" cy="130" r="2.37406" fill="white" />
+
+      <!-- Anillo pulsante sobre el Nexus: la animación exacta que pasaste
+           (.loader / .loader:after de tu CSS), llevada a SVG y centrada en
+           el núcleo — un círculo que "respira" (pulse) y otro que nace de
+           la nada y crece hasta su tamaño real en cada ciclo (scaleUp).
+           Agrandado (r=34, stroke 6) para que se note bien. -->
+      <circle
+        class="loader-nexus-pulse"
+        cx="130"
+        cy="130"
+        r="34"
+        fill="none"
+        [attr.stroke]="ringColor1"
+        stroke-width="6"
+      />
+      <circle
+        class="loader-nexus-burst"
+        cx="130"
+        cy="130"
+        r="34"
+        fill="none"
+        [attr.stroke]="ringColor2"
+        stroke-width="6"
+      />
+      <defs>
+        <radialGradient id="loaderOrb" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(130 130) scale(12.3451)">
+          <stop stop-color="white" />
+          <stop offset="0.35" stop-color="#22D3EE" />
+          <stop offset="0.75" stop-color="#4F7FFF" />
+          <stop offset="1" stop-color="#6366F1" />
+        </radialGradient>
+      </defs>
+    </svg>
+  </div>
+}
