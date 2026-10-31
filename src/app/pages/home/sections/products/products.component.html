@@ -1,0 +1,54 @@
+<section id="productos" class="page-gutter flex w-full flex-col gap-8 border-t border-line py-16 sm:gap-10 sm:py-20 lg:py-24">
+  <app-section-title
+    eyebrow="PRODUCTOS"
+    title="Plataformas para negocios reales"
+    subtitle="Cada producto resuelve un problema concreto de un tipo de negocio, y comparte la misma base tecnológica del ecosistema ZIARON."
+  />
+
+  <div class="grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+    @for (product of products; track product.route; let first = $first) {
+      <article
+        appReveal
+        class="group relative flex flex-col gap-6 overflow-hidden rounded-2xl border border-border bg-bg-elevated p-6 transition-colors hover:border-accent-border sm:p-8"
+        [class.reveal-delay-card-1]="first"
+        [class.reveal-delay-card-2]="!first"
+        style="box-shadow: var(--shadow-panel)"
+      >
+        @if (first) {
+          <!-- Glow de marca solo en el producto principal. -->
+          <div class="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full" style="background: radial-gradient(circle, rgba(79, 127, 255, 0.14), transparent 70%)"></div>
+        }
+
+        <div class="relative flex flex-wrap items-center justify-between gap-3">
+          <span class="font-mono text-[10.5px] tracking-[0.14em] text-text-dim">{{ first ? 'PRODUCTO PRINCIPAL' : 'SIGUIENTE EN EL ROADMAP' }}</span>
+          <app-status-pill [label]="product.status === 'planned' ? 'Próximamente' : statusLabel(product.status)" [tone]="product.status === 'planned' ? 'muted' : 'accent'" />
+        </div>
+
+        <div class="relative flex flex-col gap-3">
+          <h3 class="font-display font-medium tracking-[-0.015em]" [class]="first ? 'text-[26px] sm:text-[32px]' : 'text-[22px] sm:text-[26px]'">
+            {{ product.name }}
+          </h3>
+          <p class="max-w-[46ch] text-[15px] leading-[1.6] text-text-muted sm:text-[15.5px]">{{ product.tagline }}</p>
+        </div>
+
+        <ul class="relative grid gap-2.5" [class]="first ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'">
+          @for (item of product.highlights; track item) {
+            <li class="flex items-start gap-2.5 text-[14px] leading-[1.5] text-text">
+              <svg class="mt-[3px] shrink-0 text-accent-text" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+              {{ item }}
+            </li>
+          }
+        </ul>
+
+        <a [routerLink]="product.route" class="link-arrow relative mt-auto self-start pt-2">
+          {{ first ? 'Ver Restaurant OS' : 'Ver detalles' }}
+          <svg class="link-arrow__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </a>
+      </article>
+    }
+  </div>
+
+  <p appReveal class="font-mono text-[10.5px] tracking-[0.08em] text-text-dim sm:text-[11px]">
+    + {{ otherCount }} PLATAFORMAS MÁS EN EL ECOSISTEMA: IDENTIDAD, IA, CLOUD Y DEVELOPER PLATFORM.
+  </p>
+</section>

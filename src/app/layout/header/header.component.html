@@ -1,0 +1,92 @@
+<header
+  class="app-header sticky top-0 z-30 flex h-[68px] w-full flex-shrink-0 items-center justify-between gap-6 border-b border-line bg-bg px-[22px] sm:h-[84px] sm:px-11 lg:h-[92px] lg:px-[72px]"
+  [class.app-header--scrolled]="scrolled() || menuOpen()"
+>
+  <div class="flex items-center gap-10">
+    <a
+      routerLink="/"
+      class="block h-[29px] w-28 overflow-hidden rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-accent sm:h-[34px] sm:w-[132px] lg:h-[41px] lg:w-[152px]"
+      aria-label="ZIARON Technologies — inicio"
+    >
+      <!-- El SVG del wordmark (900×420) tiene aire alrededor del texto: se
+           renderiza más ancho que el contenedor y se recorta con márgenes
+           negativos + overflow-hidden (valores exactos del handoff). -->
+      <img
+        [src]="wordmarkSrc()"
+        alt="ZIARON Technologies"
+        class="block w-[142px] max-w-none -ml-[17px] -mt-[14px] sm:w-[168px] sm:-ml-[21px] sm:-mt-[17px] lg:w-[193px] lg:-ml-[24px] lg:-mt-[19px]"
+      />
+    </a>
+
+    <nav class="hidden items-center gap-7 lg:flex" aria-label="Navegación principal">
+      @for (link of links; track link.label) {
+        <a
+          [routerLink]="link.route"
+          [fragment]="link.fragment"
+          class="nav-link rounded-sm font-mono text-[11.5px] uppercase tracking-[0.1em] text-text-muted no-underline outline-none transition-colors hover:text-text focus-visible:ring-2 focus-visible:ring-accent"
+          [class.nav-link--active]="isLinkActive(link)"
+          [attr.aria-current]="isLinkActive(link) ? 'page' : null"
+        >
+          {{ link.label }}
+        </a>
+      }
+    </nav>
+  </div>
+
+  <div class="flex items-center gap-3 sm:gap-4">
+    <span class="hidden xl:inline-flex"><app-status-pill label="En construcción" /></span>
+    <a [routerLink]="cta.route" class="btn btn-primary btn-sm hidden sm:inline-flex">{{ cta.label }}</a>
+    <span class="hidden sm:block"><app-theme-toggle /></span>
+
+    <button
+      type="button"
+      class="flex h-10 w-10 items-center justify-center rounded-lg border border-border text-text outline-none transition-colors hover:border-accent-border focus-visible:ring-2 focus-visible:ring-accent lg:hidden"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="mobile-menu"
+      [attr.aria-label]="menuOpen() ? 'Cerrar menú' : 'Abrir menú'"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        @if (menuOpen()) {
+          <path d="M6 6l12 12M18 6 6 18" />
+        } @else {
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        }
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- Menú móvil (< lg): panel a pantalla completa debajo del header. Se
+     cierra al navegar (NavigationEnd) o con Escape. -->
+@if (menuOpen()) {
+  <div
+    id="mobile-menu"
+    class="mobile-menu fixed inset-x-0 bottom-0 top-[56px] z-20 flex flex-col gap-8 overflow-y-auto border-t border-line bg-bg px-[22px] pb-10 pt-8 sm:top-[64px] sm:px-11 lg:hidden"
+  >
+    <nav class="flex flex-col" aria-label="Navegación principal (móvil)">
+      @for (link of links; track link.label) {
+        <a
+          [routerLink]="link.route"
+          [fragment]="link.fragment"
+          class="flex items-center justify-between border-b border-line py-4 font-display text-[22px] font-medium tracking-[-0.01em] no-underline outline-none focus-visible:text-accent-text"
+          [class.text-accent-text]="isLinkActive(link)"
+        >
+          {{ link.label }}
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="text-text-dim">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </a>
+      }
+    </nav>
+
+    <a [routerLink]="cta.route" class="btn btn-primary w-full">{{ cta.label }}</a>
+
+    <div class="flex items-center justify-between">
+      <span class="font-mono text-[10.5px] tracking-[0.12em] text-text-dim">TEMA</span>
+      <app-theme-toggle />
+    </div>
+
+    <span class="self-start"><app-status-pill label="En construcción" /></span>
+  </div>
+}

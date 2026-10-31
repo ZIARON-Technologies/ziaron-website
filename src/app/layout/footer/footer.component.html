@@ -1,0 +1,41 @@
+<footer class="relative z-10 w-full flex-shrink-0 border-t border-line">
+  <div class="page-gutter grid grid-cols-2 gap-x-6 gap-y-10 py-12 sm:py-14 lg:grid-cols-[1.6fr_1fr_1fr_1fr] lg:gap-x-10">
+    <!-- Marca -->
+    <div class="col-span-2 flex flex-col gap-4 lg:col-span-1">
+      <a routerLink="/" class="block h-[34px] w-[132px] overflow-hidden rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-accent" aria-label="ZIARON Technologies — inicio">
+        <img [src]="wordmarkSrc()" alt="ZIARON Technologies" class="block w-[168px] max-w-none -ml-[21px] -mt-[17px]" />
+      </a>
+      <p class="max-w-[34ch] text-[14px] leading-[1.6] text-text-muted">
+        Diseñamos plataformas inteligentes que impulsan empresas.
+      </p>
+      <span class="font-mono text-[10.5px] tracking-[0.1em] text-text-dim">LIMA, PERÚ</span>
+    </div>
+
+    @for (column of columns; track column.title) {
+      <nav class="flex flex-col gap-3" [attr.aria-label]="column.title">
+        <span class="font-mono text-[10.5px] tracking-[0.14em] text-text-dim">{{ column.title.toUpperCase() }}</span>
+        @for (link of column.links; track link.label) {
+          @if (link.soon) {
+            <span class="flex flex-wrap items-baseline gap-x-2 text-[14px] text-text-dim">
+              {{ link.label }}
+              <span class="font-mono text-[9.5px] tracking-[0.08em]">PRÓXIMAMENTE</span>
+            </span>
+          } @else {
+            <a
+              [routerLink]="link.route"
+              [fragment]="link.fragment"
+              class="self-start rounded-sm text-[14px] text-text-muted no-underline outline-none transition-colors hover:text-accent-text focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              {{ link.label }}
+            </a>
+          }
+        }
+      </nav>
+    }
+  </div>
+
+  <div class="page-gutter flex flex-col gap-2 border-t border-line py-5 font-mono text-[10px] tracking-[0.07em] text-text-dim sm:flex-row sm:items-center sm:justify-between lg:text-[10.5px]">
+    <span>&copy; {{ year }} ZIARON Technologies. Todos los derechos reservados.</span>
+    <span>Empresa en constitución &middot; ziaron.com</span>
+  </div>
+</footer>

@@ -1,15 +1,18 @@
-<!-- Capas decorativas de fondo (retícula de puntos + glow), ver README del
-     handoff: van detrás de header/main/footer, cubriendo toda la página, no
-     solo el hero. Por eso viven acá (shell) y no dentro de un componente. -->
+<!-- Shell del sitio: lo que se repite en TODAS las rutas. El contenido de
+     cada página entra por <router-outlet /> dentro de <main>.
+     Capas decorativas de fondo (retícula + glow): cubren toda la página,
+     por eso viven acá y no dentro de un componente (ver app.scss). -->
 <div class="page-dot-grid pointer-events-none absolute inset-0 z-0"></div>
 <div class="page-glow pointer-events-none absolute -right-[200px] -top-[220px] z-0 h-[760px] w-[760px] rounded-full"></div>
 
 <app-loader />
+<app-scroll-progress />
 
 <app-header />
 
-<main class="relative z-10 flex w-full flex-1 flex-col gap-10 px-[22px] py-[34px] sm:gap-[52px] sm:px-11 sm:py-14 lg:gap-16 lg:px-[72px] lg:py-[88px]">
-  <app-home />
+<main class="relative z-10 flex w-full flex-1 flex-col">
+  <router-outlet />
 </main>
 
 <app-footer />
+<app-back-to-top />

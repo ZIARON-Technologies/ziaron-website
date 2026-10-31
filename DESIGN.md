@@ -6,7 +6,7 @@ todo lo relativo a **cómo se ve y se siente** la página — paleta, tipografí
 espaciado, inventario de componentes, motion y estado actual — para retomar contexto
 rápido en cualquier sesión futura antes de tocar diseño.
 
-**Estado del proyecto: en construcción, avance parcial.** Este documento describe lo
+**Estado del proyecto: Landing v2 en curso (fases 0–3 hechas, ver `docs/PLAN-LANDING-V2.md`).** Este documento describe lo
 que existe HOY, no un ideal terminado. Ver "Pendiente" al final.
 
 ---
@@ -113,17 +113,24 @@ expresar un degradado condicional al tema con una sola clase:
 - **Full-bleed, sin ancho máximo centrado.** Ninguna sección usa `max-w-container`;
   el contenido va de borde a borde con padding lateral que crece por breakpoint.
 - **Breakpoints usados:** base (mobile, ~375px), `sm:` (640px, "tablet" del sistema),
-  `lg:` (1024px, "desktop"). Consistente en todo el código actual — no usar `md:`
-  si se agrega algo nuevo, para no mezclar escalas de breakpoint.
-- **Padding lateral de página:** `22px` (mobile) → `44px` (`sm:`, vía `px-11`) →
-  `72px` (`lg:`, arbitrario `px-[72px]`). Aplicado en `app.html` (`<main>`),
-  `HeaderComponent` y `FooterComponent` — deben moverse juntos si cambia.
-  Gap vertical entre secciones dentro de `<main>`: `40px` → `52px` → `64px`.
-  Padding vertical de `<main>`: `34px` → `56px` → `88px`.
-- **Scroll:** vertical normal en todos los tamaños (ya no es "pantalla única" — esa
-  fase terminó cuando se activaron Nosotros/Ecosistema/Nexus).
-- **Radios:** `999px` (pills, botones de tema), `16px`/`rounded-2xl` (panel Nexus),
-  `14px` (tarjetas de capacidades), `10px` (caja de ícono).
+  `lg:` (1024px, "desktop") y `xl:` (1280px, solo para detalles que no entran antes:
+  pill del header, tamaño máximo del H1, grilla de 4 módulos). No usar `md:`.
+- **Padding lateral de página:** `22px` (mobile) → `44px` (`sm:`) → `72px` (`lg:`).
+  Desde la v2 es la clase `.page-gutter` (`tailwind.css`), usada por cada sección,
+  `PageHeaderComponent` y el footer; el header usa los mismos valores en utilidades.
+  Si cambia, cambiar `.page-gutter` y el header juntos.
+- **Ritmo vertical (v2):** cada sección del home lleva su propio padding
+  `py-16 sm:py-20 lg:py-24` y `border-t border-line` (excepto hero y CTA final).
+  `<main>` ya no tiene padding ni gap propio.
+- **Grillas de tarjetas:** gap `16px` → `20px` (`gap-4 sm:gap-5`). Principios usa
+  grilla con bordes compartidos (`gap-px` sobre `bg-line`), se lee como tabla técnica.
+- **Scroll:** vertical normal en todos los tamaños.
+- **Radios:** `999px` (pills, botones de tema), `24px`/`rounded-3xl` (bloque CTA final),
+  `16px`/`rounded-2xl` (panel Nexus, tarjetas de producto/roadmap/módulos),
+  `14px` (tarjetas de capacidades), `10px` (botones `.btn`, caja de ícono).
+- **Botones (v2, `tailwind.css`):** `.btn-primary` = fondo `--text` / texto `--bg`
+  (negro en claro, blanco en oscuro) y pasa a `--accent` en hover; `.btn-ghost` =
+  borde + `--bg-elevated`. Alto 44px (36px con `.btn-sm`). Una sola primaria por bloque.
 - **Fondo decorativo global** (`app.scss`, capas `.page-dot-grid` + `.page-glow`,
   detrás de header+main+footer, no solo del hero):
   - Retícula de puntos: `radial-gradient(var(--dot-grid) 1px, transparent 1px)`,
@@ -170,28 +177,34 @@ abajo, terminando en el panel de estado — coherente con que la marca es
 
 ## 6. Inventario de componentes
 
-Todos standalone (Angular 22, sin NgModules), todos con `:host { display: contents; }`
-en su SCSS excepto `App` (root, sí es el contenedor flex real) — ver "por qué" en
-`CLAUDE.md`.
+Todos standalone (Angular 22). Ubicación y reglas de carpetas: ver `CLAUDE.md`.
 
-| Componente | Rol | Contenido / datos |
+| Componente | Dónde | Rol |
 |---|---|---|
-| `App` (`app.ts/html/scss`) | Shell: fondo decorativo + loader + header + main + footer | — |
-| `LoaderComponent` | Overlay de carga inicial animado | Colores random de `RING_PALETTE` |
-| `HeaderComponent` | Wordmark (SVG según tema) + nav (Nosotros/Ecosistema, oculto en mobile) + pill "En construcción" + selector de tema | — |
-| `HeroComponent` | Eyebrow + H1 con gradiente + párrafo + meta row (conteos reales) | `PRODUCTS` (conteo `live`/`building`) |
-| `AboutComponent` | Sección "Quiénes somos" (`#nosotros`) | Texto fijo, basado en visión real de la empresa |
-| `CapabilitiesComponent` | Sección "Qué hacemos" (`#ecosistema`), 4 tarjetas | `CAPABILITIES` |
-| `SystemStatusComponent` | Panel "Nexus": isotipo SVG inline + terminal de estado | `PRODUCTS` |
-| `FooterComponent` | Copyright + "Perú · ziaron.com" | `year()` (signal, `Date` actual) |
-| `ThemeToggleComponent` | 3 botones (claro/auto/oscuro) | Inyecta `ThemeService` |
+| `App` | `app.*` | Shell: fondo decorativo + loader + scroll-progress + header + `<router-outlet>` + footer + back-to-top |
+| `LoaderComponent` | `layout/loader` | Overlay de carga inicial animado (colores random de `RING_PALETTE`) |
+| `HeaderComponent` | `layout/header` | Wordmark + nav (Productos, Roadmap, Nosotros, Contacto; desde `lg`) + pill (desde `xl`) + CTA "Conoce Restaurant OS" (desde `sm`) + tema + hamburguesa/menú móvil (< `lg`) |
+| `FooterComponent` | `layout/footer` | Marca + columnas Productos/Empresa/Legal + barra de copyright |
+| `ThemeToggleComponent` | `layout/theme-toggle` | 3 botones (claro/auto/oscuro) |
+| `HeroComponent` | `pages/home/sections/hero` | `#inicio`: eyebrow + H1 de marca + propuesta de valor + 2 CTAs + meta row; panel Nexus a la derecha (desktop) |
+| `CapabilitiesComponent` | `pages/home/sections/capabilities` | `#que-hacemos`: 4 tarjetas |
+| `ProductsComponent` | `pages/home/sections/products` | `#productos`: Restaurant OS destacado (más ancho, glow) + Facturación |
+| `PrinciplesComponent` | `pages/home/sections/principles` | `#como-trabajamos`: 6 principios en grilla tipo tabla |
+| `RoadmapComponent` | `pages/home/sections/roadmap` | `#roadmap`: 3 fases, la activa con acento y punto "EN CURSO" pulsante |
+| `CtaComponent` | `pages/home/sections/cta` | `#empezar`: bloque final para dueños de negocios gastronómicos |
+| `SectionTitleComponent` | `shared/components` | Encabezado de sección: eyebrow + H2 + bajada + meta |
+| `PageHeaderComponent` | `shared/components` | "Hero chico" de páginas internas: eyebrow con línea degradada + H1 + bajada + pill |
+| `StatusPillComponent` | `shared/components` | Pill de estado (`accent` / `muted`) |
+| `NexusPanelComponent` | `shared/components/nexus-panel` | Panel Nexus (antes `SystemStatusComponent`); `[compact]` lo apila en una columna |
+| `ScrollProgressComponent` | `shared/components` | Barra de 2px arriba con degradado de marca |
+| `BackToTopComponent` | `shared/components` | Botón flotante abajo a la derecha tras ~1 pantalla de scroll |
+| Páginas | `pages/*` | `RestaurantOsComponent`, `BillingComponent`, `AboutComponent`, `ContactComponent`, `NotFoundComponent` |
 
 ### Datos (`src/app/data/content.data.ts` + `src/app/models/content.model.ts`)
 
-- `CAPABILITIES: Capability[]` — 4 líneas de trabajo (ya renderizado).
-- `PRODUCTS: ProductNode[]` — ecosistema real (ya renderizado, usado en hero Y panel
-  Nexus — si cambia, ambos se actualizan solos).
-- `PRINCIPLES`, `PHASES` — listos en datos, **sin componente ni render todavía**.
+- Tabla completa de constantes y dónde se usan: ver `CLAUDE.md` → "Datos".
+- `PRODUCTS` (6, ecosistema) alimenta panel Nexus + conteos del hero;
+  `FEATURED_PRODUCTS` (2, con página) alimenta el bloque Productos.
 - `productStatusLabel()` vs `terminalStatusLabel()`: dos formateadores del mismo
   `ProductStatus` — el primero en prosa normal ("En construcción"), el segundo estilo
   terminal en minúsculas ("construyendo"), usado solo en el panel Nexus.
@@ -207,7 +220,7 @@ solo cambia la escala y si anima o no:
 |---|---|---|---|
 | Isotipo maestro | `branding-assets/02-isotype/svg/ziaron-isotype.svg` (repo `ziaron-foundation`) | 166.1843px | 1× (referencia) |
 | Loader (animado) | `loader.component.html` | 166.1843px | 1× — copia exacta del maestro |
-| Panel Nexus (estático) | `system-status.component.html` | 112px | 0.674× |
+| Panel Nexus (estático) | `shared/components/nexus-panel/nexus-panel.component.html` | 112px | 0.674× |
 
 **Regla:** si se toca stroke-width, radio de nodo o radio del núcleo en una
 instancia, recalcular las otras dos con el mismo factor de escala relativo al
@@ -263,21 +276,13 @@ los necesita servir directamente.
 
 ## 10. Pendiente / próximas iteraciones
 
-Estado real a la fecha de este documento — revisar y tachar conforme se avance:
+El plan vivo está en `docs/PLAN-LANDING-V2.md` (fases 4–6). Pendientes de diseño:
 
-- [ ] Reactivar Principios y Hoja de ruta (`PRINCIPLES`, `PHASES` ya tienen datos,
-      faltan `PrinciplesComponent`/`RoadmapComponent`).
-- [ ] Contenido de contacto en footer (a propósito no está — no hay correo oficial
-      todavía).
-- [ ] Redes sociales (pendiente reservarlas primero, ver `01-company/README.md`).
-- [ ] Libro de reclamaciones virtual (INDECOPI) — evaluar si aplica antes de venta
-      real; necesitaría backend o proveedor externo.
-- [ ] Páginas legales (Términos, Privacidad) — activar `provideRouter`
-      (`app.config.ts`/`app.routes.ts`, ya scaffoldeados vacíos) cuando existan.
-- [ ] Extraer status pill a componente propio si se reutiliza en un tercer lugar
-      (hoy vive duplicado en `HeaderComponent` y `HeroComponent` a propósito, por
-      espacio en mobile — ver comentario en el código).
-- [ ] Conectar dominio en Vercel (ziaron.com).
+- [ ] Mockups/capturas de Restaurant OS para su página (Fase 4).
+- [ ] Formulario de lista de espera + toast de confirmación (Fase 5).
+- [ ] Botón flotante de WhatsApp (Fase 5) — apilar con "volver arriba".
+- [ ] Imagen Open Graph 1200×630 con el isotipo (Fase 6).
+- [ ] Footer: correo, redes y RUC cuando existan.
 
 **Cómo usar este documento en la próxima sesión:** leerlo completo antes de tocar
 cualquier estilo o componente visual. Si el diseño cambia (nueva ronda de Claude

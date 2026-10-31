@@ -63,3 +63,14 @@ html {
     scroll-behavior: auto !important;
   }
 }
+
+/* Punto "EN CURSO" del roadmap: pulso suave de acento (anulado por
+   prefers-reduced-motion más arriba). */
+.roadmap-pulse {
+  animation: roadmap-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes roadmap-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent-border); }
+  50% { box-shadow: 0 0 0 5px transparent; }
+}

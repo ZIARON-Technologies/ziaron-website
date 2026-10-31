@@ -1,0 +1,12 @@
+:host {
+  display: contents;
+}
+
+/* Layout de 2 columnas (sin `compact`): en desktop el isotipo queda a la
+   izquierda con divisor vertical en vez de horizontal. */
+@media (min-width: 1024px) {
+  .nexus-split {
+    border-bottom-width: 0;
+    border-right: 1px solid var(--line);
+  }
+}

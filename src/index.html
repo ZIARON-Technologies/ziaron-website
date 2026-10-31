@@ -17,6 +17,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Sin JavaScript: el contenido prerenderizado (SSG) debe verse igual.
+       Se anulan el estado inicial oculto de `reveal` y el loader. -->
+  <noscript>
+    <style>
+      .reveal { opacity: 1 !important; transform: none !important; }
+      .loader-overlay { display: none !important; }
+    </style>
+  </noscript>
 </head>
 <body class="min-h-screen w-full bg-bg font-body text-text antialiased transition-colors">
   <app-root class="block min-h-full w-full"></app-root>
