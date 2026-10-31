@@ -41,7 +41,7 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · `[~]` parcial
 - [x] 23. `/contacto` (formulario + canales configurables)
 
 ## Fase 5 — Captación
-- [~] 24. Formulario (3 variantes) + toast — **falta pegar `formEndpoint`** (Formspree)
+- [x] 24. Formulario (3 variantes) + toast — conectado a Formspree (`xljjwzew`). Probar un envío real y confirmar el formulario en Formspree
 - [~] 25. Botón flotante de WhatsApp — **falta el número** en `site.config.ts`
 - [~] 26. Privacidad (Ley 29733) y Términos publicados — **falta revisión de abogado**
 
@@ -66,7 +66,6 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · `[~]` parcial
 Nav: **Productos** (`/#productos`) · **Roadmap** (`/#roadmap`) · **Nosotros** · **Contacto** · botón **Conoce Restaurant OS**.
 
 ## Pendientes del usuario (bloquean el lanzamiento)
-- Cuenta de Formspree → `formEndpoint` en `src/app/data/site.config.ts`.
 - Push de la rama y deploy en Vercel (dominio ziaron.com, activar Analytics).
 - Revisión legal de Privacidad y Términos.
 - Canal de contacto oficial (WhatsApp, correo con dominio).

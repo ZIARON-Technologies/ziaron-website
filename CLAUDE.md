@@ -23,10 +23,11 @@ ng test
 
 ## Estado actual (rama `feature/landing-v2`)
 
-Fases 0–6 del plan implementadas en código. Lo que falta depende de
-cuentas reales del usuario (ver "Activar canales" y "Lanzamiento"):
-endpoint del formulario, WhatsApp, correo con dominio, deploy en Vercel,
-Search Console y revisión legal.
+Fases 0–6 del plan implementadas en código. Formularios conectados a
+Formspree (cuenta del usuario, formulario "ZIARON Website"). Lo que falta
+depende de cuentas reales del usuario (ver "Activar canales" y
+"Lanzamiento"): WhatsApp, correo con dominio, deploy en Vercel, Search
+Console y revisión legal.
 
 ## Stack
 
@@ -237,9 +238,10 @@ Privacidad (Ley 29733), campo trampa antispam `_gotcha`. Envía POST JSON a
 
 Regla: **nunca publicar un canal que no responde.** Todo campo vacío oculta
 su UI o muestra "en preparación". Para activar:
-1. **Formularios:** crear cuenta en https://formspree.io (plan gratis), crear
-   un formulario, pegar su URL en `formEndpoint`
-   (`'https://formspree.io/f/xxxxxxx'`). Los 3 formularios se habilitan solos.
+1. **Formularios:** ✅ activo — `https://formspree.io/f/xljjwzew` (cuenta
+   Formspree del usuario, plan gratis, un solo formulario para las 3
+   variantes; se distinguen por `origen` y `_subject`). Plan gratis ≈ 50
+   envíos/mes: revisar el límite si crece el tráfico.
 2. **WhatsApp:** número sin "+" ni espacios en `whatsapp` (`'51987654321'`).
    Aparece el botón flotante (el de "volver arriba" se apila encima) y el
    canal en /contacto.

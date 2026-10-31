@@ -32,7 +32,7 @@ export const SITE: SiteConfig = {
   city: 'Lima, Perú',
   email: '',
   whatsapp: '',
-  formEndpoint: '',
+  formEndpoint: 'https://formspree.io/f/xljjwzew',
   /** Fecha visible en las páginas legales. Actualizarla si cambian. */
   legalUpdatedAt: '31 de octubre de 2026',
 };
