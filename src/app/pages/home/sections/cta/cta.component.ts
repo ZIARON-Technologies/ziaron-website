@@ -3,8 +3,8 @@ import { RouterLink } from '@angular/router';
 import { RevealDirective } from '../../../../shared/directives/reveal.directive';
 
 /** CTA final del home (`#empezar`): dirigido al primer cliente objetivo
- * (dueños de negocios gastronómicos). En Fase 5 el botón principal pasa a
- * apuntar al formulario de lista de espera. */
+ * (dueños de negocios gastronómicos). El botón principal lleva al formulario
+ * de lista de espera (`/productos/restaurant-os#lista-espera`). */
 @Component({
   selector: 'app-cta',
   imports: [RouterLink, RevealDirective],

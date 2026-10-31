@@ -1,0 +1,43 @@
+<app-page-header
+  eyebrow="CONTACTO"
+  title="Hablemos de tu negocio"
+  lead="¿Tienes un restaurante, una pollería o una idea en la que podamos ayudarte? Escríbenos y te respondemos personalmente."
+/>
+
+<section class="page-gutter grid grid-cols-1 gap-5 pb-20 pt-12 sm:pb-24 sm:pt-16 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)] lg:gap-8">
+  <div appReveal class="rounded-3xl border border-border bg-bg-elevated p-6 sm:p-10" style="box-shadow: var(--shadow-panel)">
+    <h2 class="mb-6 font-display text-[22px] font-medium tracking-[-0.01em]">Envíanos un mensaje</h2>
+    <app-lead-form variant="contact" submitLabel="Enviar mensaje" />
+  </div>
+
+  <aside class="flex flex-col gap-4">
+    <div appReveal class="reveal-delay-card-2 flex flex-col gap-3 rounded-2xl border border-border bg-bg-elevated p-6">
+      <span class="font-mono text-[10.5px] tracking-[0.14em] text-text-dim">CANALES DIRECTOS</span>
+      @if (site.whatsapp || site.email) {
+        @if (site.whatsapp) {
+          <a [href]="waLink" target="_blank" rel="noopener" class="link-arrow">WhatsApp · {{ waDisplay }}</a>
+        }
+        @if (site.email) {
+          <a [href]="'mailto:' + site.email" class="link-arrow">{{ site.email }}</a>
+        }
+      } @else {
+        <p class="text-[14px] leading-[1.6] text-text-muted">
+          Estamos habilitando nuestro WhatsApp y correo oficial. Los publicaremos aquí en cuanto estén activos.
+        </p>
+      }
+    </div>
+    <div appReveal class="reveal-delay-card-3 flex flex-col gap-3 rounded-2xl border border-border bg-bg-elevated p-6">
+      <span class="font-mono text-[10.5px] tracking-[0.14em] text-text-dim">UBICACIÓN</span>
+      <p class="font-display text-[20px] font-medium">{{ site.city }}</p>
+      <p class="text-[14px] leading-[1.6] text-text-muted">Trabajamos de forma remota con negocios de todo el Perú.</p>
+    </div>
+    <div appReveal class="reveal-delay-card-4 flex flex-col gap-3 rounded-2xl border border-accent-border bg-accent-bg p-6">
+      <span class="font-mono text-[10.5px] tracking-[0.14em] text-accent-text">¿TIENES UN RESTAURANTE?</span>
+      <p class="text-[14px] leading-[1.6] text-text">Únete a la lista de espera de Restaurant OS y prueba las primeras versiones.</p>
+      <a routerLink="/productos/restaurant-os" fragment="lista-espera" class="link-arrow">
+        Ir a la lista de espera
+        <svg class="link-arrow__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+      </a>
+    </div>
+  </aside>
+</section>

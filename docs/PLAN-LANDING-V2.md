@@ -35,36 +35,40 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · `[~]` parcial
 - [x] 19. CTA final
 
 ## Fase 4 — Páginas de producto y empresa
-- [~] 20. `/productos/restaurant-os` (hay versión base con módulos reales)
-- [~] 21. `/productos/facturacion` (versión base "próximamente")
+- [x] 20. `/productos/restaurant-os` (problema, cómo funciona, vista conceptual, módulos, lista de espera, FAQ) — falta: capturas reales del MVP
+- [x] 21. `/productos/facturacion` (incluirá, cómo funcionará, registro de interés, FAQ)
 - [x] 22. `/nosotros` (quiénes somos, misión, visión, 5 valores, filosofía)
-- [~] 23. `/contacto` (aviso honesto: canal aún no definido)
+- [x] 23. `/contacto` (formulario + canales configurables)
 
 ## Fase 5 — Captación
-- [ ] 24. Formulario de lista de espera (+ toast de confirmación)
-- [ ] 25. Botón flotante de WhatsApp
-- [ ] 26. Política de privacidad (Ley 29733) y Términos
+- [~] 24. Formulario (3 variantes) + toast — **falta pegar `formEndpoint`** (Formspree)
+- [~] 25. Botón flotante de WhatsApp — **falta el número** en `site.config.ts`
+- [~] 26. Privacidad (Ley 29733) y Términos publicados — **falta revisión de abogado**
 
 ## Fase 6 — SEO, rendimiento y lanzamiento
-- [ ] 27. Meta description + Open Graph por página
-- [ ] 28. sitemap.xml, robots.txt, Search Console
-- [ ] 29. Analítica + Lighthouse 90+
-- [ ] 30. Deploy en Vercel con ziaron.com + correo con dominio
+- [x] 27. Meta description + Open Graph + canonical + JSON-LD por página
+- [~] 28. sitemap.xml y robots.txt — **falta Search Console** (requiere dominio publicado)
+- [~] 29. Vercel Analytics integrado; Lighthouse local SEO 100 / a11y 96–100 / perf desktop 98+ — **medir de nuevo ya publicado**
+- [ ] 30. Deploy en Vercel con ziaron.com + correo con dominio — **requiere acción/permiso del usuario**
 
 ## Mapa del sitio
 
 | Ruta | Tipo | Contenido |
 |---|---|---|
 | `/` | Home (scroll) | `#inicio` hero · `#que-hacemos` · `#productos` · `#como-trabajamos` · `#roadmap` · `#empezar` (CTA) |
-| `/productos/restaurant-os` | Página | Qué es, para quién, módulos (Core, Operación, Administración, Inteligencia), lista de espera (Fase 5) |
+| `/productos/restaurant-os` | Página | Para quién, problema, cómo funciona, módulos, lista de espera, FAQ |
 | `/productos/facturacion` | Página | Facturación electrónica SUNAT — próximamente |
-| `/nosotros` | Página | Quiénes somos, misión (placeholder), principios |
-| `/contacto` | Página | Canal de contacto (pendiente de definir) |
+| `/nosotros` | Página | Quiénes somos, misión, visión, valores, filosofía |
+| `/contacto` | Página | Formulario + canales configurables |
+| `/legal/privacidad`, `/legal/terminos` | Páginas | Política de privacidad y Términos de uso |
 | `**` | 404 | Página no encontrada |
 
 Nav: **Productos** (`/#productos`) · **Roadmap** (`/#roadmap`) · **Nosotros** · **Contacto** · botón **Conoce Restaurant OS**.
 
-## Decisiones pendientes del usuario
+## Pendientes del usuario (bloquean el lanzamiento)
+- Cuenta de Formspree → `formEndpoint` en `src/app/data/site.config.ts`.
+- Push de la rama y deploy en Vercel (dominio ziaron.com, activar Analytics).
+- Revisión legal de Privacidad y Términos.
 - Canal de contacto oficial (WhatsApp, correo con dominio).
 - Redes sociales reservadas con el nombre ZIARON.
 - Imágenes/mockups de Restaurant OS para la página del producto.

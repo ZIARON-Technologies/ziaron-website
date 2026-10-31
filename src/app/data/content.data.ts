@@ -152,8 +152,8 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
   {
     title: 'Legal',
     links: [
-      { label: 'Privacidad', route: '/legal/privacidad', soon: true },
-      { label: 'Términos', route: '/legal/terminos', soon: true },
+      { label: 'Privacidad', route: '/legal/privacidad' },
+      { label: 'Términos de uso', route: '/legal/terminos' },
     ],
   },
 ];
@@ -178,3 +178,74 @@ export function terminalStatusLabel(status: ProductStatus): string {
     default: return '';
   }
 }
+
+/* ── Página /productos/restaurant-os ───────────────────────────────────── */
+
+/** Problemas que resuelve (validar con las entrevistas a negocios). */
+export const RESTAURANT_OS_PAINS = [
+  {
+    title: 'Pedidos desordenados',
+    desc: 'Pedidos que llegan por WhatsApp, teléfono y mostrador, anotados en papel. Alguno siempre se pierde o sale tarde.',
+  },
+  {
+    title: 'Caja que no cuadra',
+    desc: 'Al cierre del día cuesta saber cuánto se vendió, por qué medio y qué productos se movieron.',
+  },
+  {
+    title: 'Sistemas caros o complicados',
+    desc: 'Las soluciones del mercado piden equipos especiales, contratos largos o semanas de capacitación.',
+  },
+];
+
+/** Cómo funciona, en 3 pasos. */
+export const RESTAURANT_OS_STEPS = [
+  { title: 'Configura tu carta', desc: 'Carga tus productos, combos, precios y locales desde el panel web.' },
+  { title: 'Recibe pedidos de todos lados', desc: 'Salón, menú QR y delivery llegan a una sola pantalla y pasan directo a cocina.' },
+  { title: 'Controla tu negocio', desc: 'Caja, ventas del día y comprobantes electrónicos en tiempo real, desde cualquier dispositivo.' },
+];
+
+export const RESTAURANT_OS_FAQ = [
+  {
+    q: '¿Cuándo estará disponible?',
+    a: 'Restaurant OS está en construcción (Fase 1 de nuestro roadmap). Los negocios de la lista de espera tendrán acceso anticipado a las versiones piloto antes del lanzamiento general.',
+  },
+  {
+    q: '¿Tengo que comprar equipos nuevos?',
+    a: 'La idea es que no. Restaurant OS funciona en la nube, desde el navegador de una PC, tablet o celular que ya tengas. Para imprimir tickets y comandas se usará una impresora térmica.',
+  },
+  {
+    q: '¿Incluirá facturación electrónica SUNAT?',
+    a: 'Sí. Está planificado integrar la emisión de boletas y facturas electrónicas con nuestra propia plataforma de facturación.',
+  },
+  {
+    q: '¿Cuánto costará?',
+    a: 'Será una suscripción mensual pensada para negocios pequeños y medianos. Publicaremos los precios al lanzamiento; los pilotos tendrán condiciones especiales.',
+  },
+  {
+    q: '¿Sirve si tengo más de un local?',
+    a: 'Sí. Restaurant OS está diseñado desde el inicio como multisede: varios locales bajo la misma cuenta, cada uno con su carta, caja y usuarios.',
+  },
+];
+
+/* ── Página /productos/facturacion ─────────────────────────────────────── */
+
+export const BILLING_STEPS = [
+  { title: 'Registra tu empresa', desc: 'Tu RUC y tu certificado digital, una sola vez.' },
+  { title: 'Emite desde donde vendes', desc: 'Desde el panel web, desde Restaurant OS o desde tu propio sistema vía API.' },
+  { title: 'Validación automática', desc: 'Cada comprobante se envía para su validación y queda guardado con su constancia.' },
+];
+
+export const BILLING_FAQ = [
+  {
+    q: '¿Para qué tipo de negocios es?',
+    a: 'Para cualquier negocio obligado a emitir comprobantes electrónicos: restaurantes, comercios, servicios y empresas que necesitan integrar la facturación a su propio sistema.',
+  },
+  {
+    q: '¿Qué comprobantes podré emitir?',
+    a: 'Boletas y facturas electrónicas, notas de crédito y notas de débito. Iremos ampliando los tipos de documento según la demanda.',
+  },
+  {
+    q: '¿Cuándo estará disponible?',
+    a: 'La facturación electrónica es parte de la Fase 2 de nuestro roadmap. Si te interesa, déjanos tus datos y te avisaremos primero.',
+  },
+];

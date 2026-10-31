@@ -5,8 +5,9 @@
   status="En construcción"
 />
 
-<section class="page-gutter flex flex-col gap-5 py-12 sm:py-14">
-  <span class="font-mono text-[10.5px] tracking-[0.14em] text-text-dim">PENSADO PARA</span>
+<!-- Para quién -->
+<section class="page-gutter flex flex-col gap-4 py-10 sm:flex-row sm:items-center sm:gap-6">
+  <span class="shrink-0 font-mono text-[10.5px] tracking-[0.14em] text-text-dim">PENSADO PARA</span>
   <ul class="flex flex-wrap gap-2.5">
     @for (item of audience; track item) {
       <li appReveal class="rounded-full border border-border bg-bg-elevated px-4 py-2 text-[14px] text-text">{{ item }}</li>
@@ -14,6 +15,52 @@
   </ul>
 </section>
 
+<!-- Problema -->
+<section class="page-gutter flex flex-col gap-8 border-t border-line py-16 sm:gap-10 sm:py-20">
+  <app-section-title
+    eyebrow="EL PROBLEMA"
+    title="Así se trabaja hoy en muchos locales"
+    subtitle="Lo escuchamos una y otra vez: el negocio crece, pero las herramientas no acompañan."
+  />
+  <div class="grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-3">
+    @for (pain of pains; track pain.title; let i = $index) {
+      <article
+        appReveal
+        class="flex flex-col gap-3 rounded-2xl border border-border bg-bg-elevated p-6 sm:p-7"
+        [class.reveal-delay-card-1]="i === 0"
+        [class.reveal-delay-card-2]="i === 1"
+        [class.reveal-delay-card-3]="i === 2"
+      >
+        <span class="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[rgba(239,68,68,0.08)] font-mono text-[12px] text-[#b91c1c] dark:text-[#f87171]">0{{ i + 1 }}</span>
+        <h3 class="font-display text-[18px] font-medium tracking-[-0.01em]">{{ pain.title }}</h3>
+        <p class="text-[14.5px] leading-[1.6] text-text-muted">{{ pain.desc }}</p>
+      </article>
+    }
+  </div>
+</section>
+
+<!-- Cómo funciona + vista conceptual -->
+<section class="page-gutter grid grid-cols-1 items-center gap-10 border-t border-line py-16 sm:py-20 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-14">
+  <div class="flex flex-col gap-8">
+    <app-section-title eyebrow="CÓMO FUNCIONA" title="Todo tu local en una sola pantalla" />
+    <ol class="flex flex-col gap-6">
+      @for (step of steps; track step.title; let i = $index) {
+        <li appReveal class="flex gap-4" [class.reveal-delay-card-1]="i === 0" [class.reveal-delay-card-2]="i === 1" [class.reveal-delay-card-3]="i === 2">
+          <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-accent-border bg-accent-bg font-mono text-[12px] text-accent-text">{{ i + 1 }}</span>
+          <div class="flex flex-col gap-1 pt-1">
+            <h3 class="font-display text-[17px] font-medium tracking-[-0.01em]">{{ step.title }}</h3>
+            <p class="text-[14.5px] leading-[1.6] text-text-muted">{{ step.desc }}</p>
+          </div>
+        </li>
+      }
+    </ol>
+  </div>
+  <div appReveal class="reveal-delay-panel">
+    <app-concept-board />
+  </div>
+</section>
+
+<!-- Módulos -->
 <section class="page-gutter flex flex-col gap-8 border-t border-line py-16 sm:gap-10 sm:py-20">
   <app-section-title
     eyebrow="MÓDULOS"
@@ -49,16 +96,32 @@
   </div>
 </section>
 
-<!-- Fase 5: acá va el formulario de lista de espera. Mientras tanto, aviso
-     honesto (sin formulario falso). -->
-<section id="lista-espera" class="page-gutter pb-20 pt-4 sm:pb-24">
-  <div appReveal class="flex flex-col gap-4 rounded-2xl border border-accent-border bg-accent-bg p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
-    <div class="flex flex-col gap-1.5">
-      <span class="font-mono text-[10.5px] tracking-[0.14em] text-accent-text">LISTA DE ESPERA · PRÓXIMAMENTE</span>
-      <p class="max-w-[56ch] text-[15px] leading-[1.6] text-text">
-        Muy pronto podrás registrarte para probar Restaurant OS en tu negocio antes que nadie.
+<!-- Lista de espera -->
+<section id="lista-espera" class="page-gutter scroll-mt-24 border-t border-line py-16 sm:py-20">
+  <div class="grid grid-cols-1 gap-10 rounded-3xl border border-border bg-bg-elevated p-6 sm:p-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-14 lg:p-14" style="box-shadow: var(--shadow-panel)">
+    <div class="flex flex-col gap-4">
+      <span class="font-mono text-[10.5px] tracking-[0.16em] text-accent-text">LISTA DE ESPERA</span>
+      <h2 class="font-display text-[26px] font-medium leading-[1.2] tracking-[-0.015em] text-balance sm:text-[32px]">
+        Sé de los primeros en usar Restaurant OS
+      </h2>
+      <p class="text-[15px] leading-[1.65] text-text-muted">
+        Buscamos negocios que quieran probar las primeras versiones y ayudarnos a construir el sistema que realmente necesitan.
       </p>
+      <ul class="mt-2 flex flex-col gap-2.5">
+        @for (benefit of ['Acceso anticipado a los pilotos', 'Condiciones especiales al lanzamiento', 'Tu opinión define las prioridades']; track benefit) {
+          <li class="flex items-start gap-2.5 text-[14px] text-text">
+            <svg class="mt-[3px] shrink-0 text-accent-text" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+            {{ benefit }}
+          </li>
+        }
+      </ul>
     </div>
-    <a routerLink="/contacto" class="btn btn-ghost self-start sm:self-auto">Escríbenos</a>
+    <app-lead-form variant="waitlist" submitLabel="Unirme a la lista de espera" />
   </div>
+</section>
+
+<!-- FAQ -->
+<section class="page-gutter flex flex-col gap-8 border-t border-line pb-20 pt-16 sm:gap-10 sm:pb-24 sm:pt-20">
+  <app-section-title eyebrow="PREGUNTAS FRECUENTES" title="Lo que suelen preguntarnos" />
+  <app-faq [items]="faq" />
 </section>

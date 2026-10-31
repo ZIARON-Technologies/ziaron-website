@@ -158,3 +158,55 @@
     .page-gutter { padding-inline: 72px; }
   }
 }
+
+/* ── Campos de formulario (LeadFormComponent) ─────────────────────────── */
+@layer components {
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .field__label {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .field__label b {
+    color: var(--accent-text);
+    font-weight: 500;
+  }
+  .field__label i {
+    font-style: normal;
+    font-weight: 400;
+    color: var(--text-muted); /* text-dim no llega a AA en 13px */
+  }
+  .field__input {
+    width: 100%;
+    min-height: 2.75rem;
+    padding-inline: 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 0.625rem;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 0.92rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .field__input::placeholder {
+    color: var(--text-dim);
+  }
+  .field__input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-bg);
+  }
+  .field__input--error {
+    border-color: rgba(239, 68, 68, 0.6);
+  }
+  .field__error {
+    font-size: 0.78rem;
+    color: #ef4444;
+  }
+  .dark .field__error {
+    color: #f87171;
+  }
+}

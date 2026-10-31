@@ -1,9 +1,10 @@
 import { Component, HostListener, PLATFORM_ID, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { SITE } from '../../../data/site.config';
 
 /** Botón flotante "volver arriba" (patrón de `iamwgp-portfolio`): aparece
  * después de ~1 pantalla de scroll. Abajo a la derecha — si en Fase 5 se
- * agrega el botón de WhatsApp, este se apila encima. */
+ * configura WhatsApp (SITE.whatsapp), este se apila encima. */
 @Component({
   selector: 'app-back-to-top',
   template: `
@@ -11,7 +12,8 @@ import { isPlatformBrowser } from '@angular/common';
       type="button"
       (click)="toTop()"
       aria-label="Volver arriba"
-      class="fixed bottom-5 right-5 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-bg-elevated text-text-muted outline-none transition-all duration-300 hover:border-accent-border hover:text-accent-text focus-visible:ring-2 focus-visible:ring-accent sm:bottom-8 sm:right-8"
+      class="fixed right-5 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-bg-elevated text-text-muted outline-none transition-all duration-300 hover:border-accent-border hover:text-accent-text focus-visible:ring-2 focus-visible:ring-accent sm:right-8"
+      [class]="stacked ? 'bottom-[84px] sm:bottom-[100px]' : 'bottom-5 sm:bottom-8'"
       [class.pointer-events-none]="!visible()"
       [class.opacity-0]="!visible()"
       [class.translate-y-3]="!visible()"
@@ -27,6 +29,8 @@ import { isPlatformBrowser } from '@angular/common';
 export class BackToTopComponent {
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   protected readonly visible = signal(false);
+  /** Si existe el botón de WhatsApp, este se apila encima. */
+  protected readonly stacked = !!SITE.whatsapp;
 
   @HostListener('window:scroll')
   protected onScroll(): void {

@@ -198,7 +198,22 @@ Todos standalone (Angular 22). Ubicación y reglas de carpetas: ver `CLAUDE.md`.
 | `NexusPanelComponent` | `shared/components/nexus-panel` | Panel Nexus (antes `SystemStatusComponent`); `[compact]` lo apila en una columna |
 | `ScrollProgressComponent` | `shared/components` | Barra de 2px arriba con degradado de marca |
 | `BackToTopComponent` | `shared/components` | Botón flotante abajo a la derecha tras ~1 pantalla de scroll |
-| Páginas | `pages/*` | `RestaurantOsComponent`, `BillingComponent`, `AboutComponent`, `ContactComponent`, `NotFoundComponent` |
+| `LeadFormComponent` | `shared/components/lead-form` | Formulario de captación (variantes waitlist/billing/contact). Campos con clases `.field`, `.field__label`, `.field__input`, `.field__error` (`tailwind.css`) |
+| `ToastComponent` | `shared/components/toast` | Toasts abajo a la izquierda (borde acento = éxito, rojo = error) |
+| `FaqComponent` | `shared/components/faq` | Acordeón `<details>` nativo, ícono + que rota a × |
+| `WhatsappFloatComponent` | `shared/components/whatsapp-float` | Botón verde WhatsApp (#25D366) abajo a la derecha, solo si hay número |
+| `ConceptBoardComponent` | `pages/restaurant-os/concept-board` | Tablero de pedidos ilustrativo (KPIs + 3 columnas), etiqueta "VISTA CONCEPTUAL" |
+| Páginas | `pages/*` | `RestaurantOsComponent`, `BillingComponent`, `AboutComponent`, `ContactComponent`, `PrivacyComponent`, `TermsComponent`, `NotFoundComponent` |
+
+### Patrones de página (v2)
+
+- **Bloque de captación:** tarjeta `rounded-3xl` con `--shadow-panel`, texto +
+  beneficios a la izquierda y `<app-lead-form>` a la derecha (desktop).
+- **Pasos numerados:** círculo con borde/fondo de acento + título + bajada.
+- **Problemas:** número sobre fondo rojo tenue (`#b91c1c` claro / `#f87171`
+  oscuro) — único uso de rojo fuera de errores de formulario.
+- **Documentos legales:** `.legal-doc` (`pages/legal/legal-layout.scss`),
+  ancho máximo 860px, H2 display 20px, viñetas con marcador de acento.
 
 ### Datos (`src/app/data/content.data.ts` + `src/app/models/content.model.ts`)
 
@@ -279,9 +294,8 @@ los necesita servir directamente.
 El plan vivo está en `docs/PLAN-LANDING-V2.md` (fases 4–6). Pendientes de diseño:
 
 - [ ] Mockups/capturas de Restaurant OS para su página (Fase 4).
-- [ ] Formulario de lista de espera + toast de confirmación (Fase 5).
-- [ ] Botón flotante de WhatsApp (Fase 5) — apilar con "volver arriba".
-- [ ] Imagen Open Graph 1200×630 con el isotipo (Fase 6).
+- [ ] Contraste AA de `--text-dim` en labels mono pequeños sobre tarjetas
+      (decidir: oscurecer token o usar `text-text-muted`).
 - [ ] Footer: correo, redes y RUC cuando existan.
 
 **Cómo usar este documento en la próxima sesión:** leerlo completo antes de tocar

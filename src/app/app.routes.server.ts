@@ -12,5 +12,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'productos/facturacion', renderMode: RenderMode.Prerender },
   { path: 'nosotros', renderMode: RenderMode.Prerender },
   { path: 'contacto', renderMode: RenderMode.Prerender },
+  { path: 'legal/privacidad', renderMode: RenderMode.Prerender },
+  { path: 'legal/terminos', renderMode: RenderMode.Prerender },
   { path: '**', renderMode: RenderMode.Client },
 ];

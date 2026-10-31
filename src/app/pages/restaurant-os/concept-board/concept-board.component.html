@@ -1,0 +1,51 @@
+<div class="w-full overflow-hidden rounded-2xl border border-border bg-bg-elevated" style="box-shadow: var(--shadow-panel)" aria-label="Vista conceptual del tablero de pedidos de Restaurant OS" role="img">
+  <!-- Barra de ventana -->
+  <div class="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
+    <div class="flex items-center gap-1.5">
+      <span class="block h-[7px] w-[7px] rounded-full" style="background: #8B5CF6"></span>
+      <span class="block h-[7px] w-[7px] rounded-full" style="background: #4F7FFF"></span>
+      <span class="block h-[7px] w-[7px] rounded-full bg-accent"></span>
+    </div>
+    <span class="truncate font-mono text-[10px] tracking-[0.08em] text-text-dim">restaurant-os · pedidos · local principal</span>
+    <span class="shrink-0 rounded-full border border-border px-2 py-0.5 font-mono text-[9px] tracking-[0.1em] text-text-dim">VISTA CONCEPTUAL</span>
+  </div>
+
+  <!-- Resumen del día -->
+  <div class="grid grid-cols-3 border-b border-line">
+    @for (kpi of [['Ventas hoy', 'S/ 2,480'], ['Pedidos', '64'], ['Ticket prom.', 'S/ 38.75']]; track kpi[0]; let last = $last) {
+      <div class="flex flex-col gap-0.5 px-4 py-3" [class.border-r]="!last" [class.border-line]="!last">
+        <span class="font-mono text-[9.5px] tracking-[0.08em] text-text-dim">{{ kpi[0].toUpperCase() }}</span>
+        <span class="font-display text-[16px] font-medium sm:text-[18px]">{{ kpi[1] }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- Columnas de pedidos -->
+  <div class="grid grid-cols-1 gap-3 p-3 sm:grid-cols-3 sm:p-4">
+    @for (col of columns; track col.title) {
+      <div class="flex flex-col gap-2.5 rounded-xl bg-bg p-2.5">
+        <div class="flex items-center justify-between px-1">
+          <span class="flex items-center gap-2 font-mono text-[10px] tracking-[0.1em] text-text-muted">
+            <span
+              class="block h-1.5 w-1.5 rounded-full"
+              [style.background]="col.tone === 'new' ? '#8B5CF6' : col.tone === 'kitchen' ? '#F59E0B' : 'var(--accent)'"
+            ></span>
+            {{ col.title.toUpperCase() }}
+          </span>
+          <span class="font-mono text-[10px] text-text-dim">{{ col.tickets.length }}</span>
+        </div>
+        @for (t of col.tickets; track t.id) {
+          <div class="flex flex-col gap-1.5 rounded-lg border border-border bg-bg-elevated p-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-[10.5px] text-text">{{ t.id }}</span>
+              <span class="rounded bg-accent-bg px-1.5 py-0.5 font-mono text-[9px] text-accent-text">{{ t.origin }}</span>
+            </div>
+            <span class="text-[12px] font-medium text-text">{{ t.table }}</span>
+            <span class="text-[11.5px] leading-[1.45] text-text-muted">{{ t.items }}</span>
+            <span class="font-mono text-[9.5px] text-text-dim">{{ t.time }}</span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

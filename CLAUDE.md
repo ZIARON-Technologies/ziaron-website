@@ -23,9 +23,10 @@ ng test
 
 ## Estado actual (rama `feature/landing-v2`)
 
-Fases 0–3 del plan hechas: router + SSG, componentes compartidos, header y
-footer nuevos, home rediseñado. Páginas internas en versión base (Fase 4
-las completa). Pendiente: captación (Fase 5) y SEO/deploy (Fase 6).
+Fases 0–6 del plan implementadas en código. Lo que falta depende de
+cuentas reales del usuario (ver "Activar canales" y "Lanzamiento"):
+endpoint del formulario, WhatsApp, correo con dominio, deploy en Vercel,
+Search Console y revisión legal.
 
 ## Stack
 
@@ -46,15 +47,36 @@ las completa). Pendiente: captación (Fase 5) y SEO/deploy (Fase 6).
 | `/productos/facturacion` | `pages/billing` (lazy) | Prerender |
 | `/nosotros` | `pages/about` (lazy) | Prerender |
 | `/contacto` | `pages/contact` (lazy) | Prerender |
+| `/legal/privacidad` | `pages/legal/privacy` (lazy) | Prerender |
+| `/legal/terminos` | `pages/legal/terms` (lazy) | Prerender |
 | `**` | `pages/not-found` (lazy) | Client (fallback `index.csr.html`) |
 
-**Al agregar una ruta:** agregarla en `app.routes.ts` (con `title`) **y** en
-`app.routes.server.ts` (si no, no se prerenderiza). Agregarla al footer
-(`FOOTER_COLUMNS`) y, si corresponde, al nav (`NAV_LINKS`).
+**Checklist al agregar una ruta:**
+1. `app.routes.ts` con `title` y `data.description` (≤ 160 caracteres).
+2. `app.routes.server.ts` (si no, no se prerenderiza).
+3. `public/sitemap.xml`.
+4. Footer (`FOOTER_COLUMNS`) y, si corresponde, nav (`NAV_LINKS`).
 
-Títulos de pestaña: `core/services/title.strategy.ts` → "`<título>` · ZIARON
-Technologies" (el home usa "ZIARON Technologies — ..."). Meta description y
-Open Graph por página: Fase 6.
+## SEO (`core/services/title.strategy.ts`)
+
+`ZiaronTitleStrategy` corre en cada navegación y en el prerender, así el
+HTML estático ya trae: `<title>` ("`<título>` · ZIARON Technologies"; home
+"ZIARON Technologies — ..."), meta description (`data.description`), Open
+Graph + Twitter card (imagen `public/brand/social/og-ziaron.png`, 1200×630,
+renderizada del SVG oficial `ziaron-foundation/branding-assets/06-social/
+open-graph/ziaron-og.svg`), `<link rel="canonical">` y robots
+(`data.noindex: true` en el 404). En `index.html`: JSON-LD `Organization`,
+`theme-color` por tema, favicon SVG + apple-touch-icon
+(`public/brand/favicon/`, del branding oficial). `public/robots.txt` y
+`public/sitemap.xml` (estático, mantener a mano).
+
+## Analítica
+
+Vercel Web Analytics (`@vercel/analytics`, `inject()` en `App`, solo
+navegador y solo producción). Sin cookies, datos agregados — coherente con
+la Política de privacidad. Hay que **activar Analytics en el proyecto de
+Vercel**; en local la petición a `/_vercel/insights/script.js` falla y es
+normal.
 
 `vercel.json` reescribe a `/index.csr.html` cualquier URL que no exista como
 archivo (Vercel sirve primero los HTML prerenderizados). Verificar al hacer
@@ -69,8 +91,10 @@ app.config.server.ts         Config extra solo para el prerender (provideServerR
 app.routes.ts / .server.ts   Rutas cliente / modo de render por ruta
 core/services/
   theme.service.ts           Tema claro/oscuro/auto (SSR-safe)
-  title.strategy.ts          Títulos de pestaña por ruta
+  title.strategy.ts          Título + meta + Open Graph + canonical por ruta
+  toast.service.ts           Notificaciones efímeras
 data/content.data.ts         TODOS los textos de negocio y la navegación (ver abajo)
+data/site.config.ts          Canales reales (correo, WhatsApp, endpoint de formularios) — ver "Activar canales"
 models/                      Interfaces (sin lógica)
 layout/                      Piezas del shell, presentes en todas las rutas
   header/                    Wordmark + nav + CTA + tema + menú móvil
@@ -80,9 +104,12 @@ layout/                      Piezas del shell, presentes en todas las rutas
 pages/                       Una carpeta por ruta
   home/                      Solo compone secciones (sections/*)
     sections/                hero, capabilities, products, principles, roadmap, cta
-  restaurant-os/ billing/ about/ contact/ not-found/
+  restaurant-os/             (+ concept-board/: tablero de pedidos ilustrativo)
+  billing/ about/ contact/ not-found/
+  legal/                     privacy, terms (+ legal-layout.scss compartido)
 shared/
-  components/                section-title, page-header, status-pill, nexus-panel, scroll-progress, back-to-top
+  components/                section-title, page-header, status-pill, nexus-panel, scroll-progress,
+                             back-to-top, toast, lead-form, faq, whatsapp-float
   directives/reveal.directive.ts
 ```
 
@@ -101,6 +128,8 @@ en 2+ lugares va en `shared/components/`; si está en todas las rutas va en
 | `PRINCIPLES` | Home `#como-trabajamos` (títulos de 06-engineering; `desc` aprobadas por el usuario) |
 | `MISSION`, `VISION`, `COMPANY_VALUES` | `/nosotros`. Fuente oficial: `ziaron-foundation/01-company/README.md` — cambiar en ambos lados |
 | `PHASES` | Home `#roadmap` |
+| `RESTAURANT_OS_PAINS`, `_STEPS`, `_FAQ` | `/productos/restaurant-os` (problema, cómo funciona, FAQ) |
+| `BILLING_STEPS`, `BILLING_FAQ` | `/productos/facturacion` |
 | `NAV_LINKS`, `PRIMARY_CTA` | Header y menú móvil |
 | `FOOTER_COLUMNS` | Footer. `soon: true` = página que aún no existe → texto "Próximamente", sin link |
 
@@ -186,13 +215,60 @@ Durante el build cada ruta se ejecuta en Node, donde NO existen `window`,
 Sufijos clásicos (`.component.ts`, `.service.ts`...) restaurados en
 `angular.json` → `schematics`. `ng generate` ya los aplica.
 
+## Formularios (`shared/components/lead-form`)
+
+Un componente, 3 variantes (`variant`): `waitlist` (Restaurant OS
+`#lista-espera`), `billing` (`/productos/facturacion#interes`) y `contact`
+(`/contacto`). Reactive Forms, validación de celular peruano (9 dígitos que
+empiezan en 9, con o sin +51), consentimiento obligatorio con link a
+Privacidad (Ley 29733), campo trampa antispam `_gotcha`. Envía POST JSON a
+`SITE.formEndpoint` con `origen` y `_subject` para filtrar en el correo.
+Éxito/error → toast + estado de éxito en el propio formulario.
+
+## Activar canales (`data/site.config.ts`)
+
+Regla: **nunca publicar un canal que no responde.** Todo campo vacío oculta
+su UI o muestra "en preparación". Para activar:
+1. **Formularios:** crear cuenta en https://formspree.io (plan gratis), crear
+   un formulario, pegar su URL en `formEndpoint`
+   (`'https://formspree.io/f/xxxxxxx'`). Los 3 formularios se habilitan solos.
+2. **WhatsApp:** número sin "+" ni espacios en `whatsapp` (`'51987654321'`).
+   Aparece el botón flotante (el de "volver arriba" se apila encima) y el
+   canal en /contacto.
+3. **Correo:** `email` (idealmente `contacto@ziaron.com`). Aparece en
+   /contacto y en la Política de privacidad (derechos ARCO).
+
+## Lanzamiento (pendiente del usuario)
+
+- Push de `feature/landing-v2` → PR a `develop`/`master`.
+- Vercel: proyecto apuntando a este repo, framework Angular, output
+  `dist/ziaron-website/browser`; dominio `ziaron.com`; activar Analytics.
+  Verificar que `/nosotros` sirve el HTML prerenderizado y que una URL
+  inexistente cae en el 404 (`index.csr.html`).
+- Google Search Console: verificar dominio y enviar `sitemap.xml`.
+- Lighthouse sobre el sitio publicado (en local: SEO 100, accesibilidad
+  96–100, performance desktop 98–99; performance móvil local ~72 no es
+  representativo — sin compresión y con Google Fonts bloqueado).
+- **Legal:** Privacidad y Términos son texto base sin asesoría legal.
+  Revisar con un abogado, completar razón social y RUC al constituir, y
+  evaluar la inscripción del banco de datos ante la Autoridad Nacional de
+  Protección de Datos Personales. Libro de reclamaciones cuando haya venta.
+- Contraste: `--text-dim` en textos mono de ~10px no llega a AA 4.5:1 sobre
+  tarjetas (aviso de Lighthouse). Decisión de diseño abierta: oscurecer el
+  token o usar `text-text-muted` en esos labels.
+
 ## Contenido placeholder / honesto (no inventar)
 
 - `/contacto`: aviso honesto de que el canal oficial está en preparación. No
   se publica un correo/WhatsApp/formulario que todavía no responde.
 - Footer: "Empresa en constitución" (aprobado por el usuario; cambiar a razón social + RUC al constituirse); sin correo ni redes hasta que existan.
-- Lista de espera de Restaurant OS: bloque "Próximamente" en `#lista-espera`
-  de su página (el formulario real es Fase 5).
+- Formularios: visibles pero con envío deshabilitado ("Disponible pronto")
+  hasta configurar `formEndpoint`.
+- Vista conceptual de Restaurant OS (`concept-board`): ilustración en
+  HTML/CSS con datos ficticios y etiqueta "VISTA CONCEPTUAL". Reemplazar por
+  capturas reales cuando exista el MVP.
+- FAQ de Restaurant OS: respuestas sobre equipos/precios redactadas como
+  intención ("la idea es", "será"), no como promesa — revisar al lanzar.
 
 ## Historial
 
@@ -209,3 +285,8 @@ Sufijos clásicos (`.component.ts`, `.service.ts`...) restaurados en
   y en `ziaron-foundation/01-company`). Valores de empresa ≠ principios de
   ingeniería: los primeros son cultura (`/nosotros`), los segundos cómo se
   construye (home `#como-trabajamos`).
+- **Fases 4–6:** páginas completas de Restaurant OS (problema, cómo
+  funciona, vista conceptual, lista de espera, FAQ), Facturación y Contacto;
+  formulario único con 3 variantes, toast, WhatsApp flotante, páginas
+  legales; SEO por ruta, OG image, favicon, JSON-LD, sitemap/robots y
+  Vercel Analytics.

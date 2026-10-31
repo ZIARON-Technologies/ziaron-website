@@ -1,0 +1,49 @@
+<app-page-header
+  eyebrow="PRODUCTO · FACTURACIÓN ELECTRÓNICA"
+  title="Comprobantes electrónicos SUNAT, sin complicaciones"
+  [lead]="product.tagline + ' Funcionará sola o integrada con Restaurant OS y con tus propios sistemas.'"
+  status="Próximamente"
+/>
+
+<section class="page-gutter flex flex-col gap-8 py-16 sm:gap-10 sm:py-20">
+  <app-section-title eyebrow="LO QUE INCLUIRÁ" title="Lo esencial para facturar bien" />
+  <ul class="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
+    @for (item of product.highlights; track item; let i = $index) {
+      <li appReveal class="flex flex-col gap-3 rounded-2xl border border-border bg-bg-elevated p-6" [class.reveal-delay-card-1]="i === 0" [class.reveal-delay-card-2]="i === 1" [class.reveal-delay-card-3]="i === 2">
+        <span class="font-mono text-[11px] text-accent-text">0{{ i + 1 }}</span>
+        <span class="font-display text-[18px] font-medium tracking-[-0.01em]">{{ item }}</span>
+      </li>
+    }
+  </ul>
+</section>
+
+<section class="page-gutter flex flex-col gap-8 border-t border-line py-16 sm:gap-10 sm:py-20">
+  <app-section-title eyebrow="CÓMO FUNCIONARÁ" title="Tres pasos, una sola vez" />
+  <ol class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    @for (step of steps; track step.title; let i = $index) {
+      <li appReveal class="flex gap-4" [class.reveal-delay-card-1]="i === 0" [class.reveal-delay-card-2]="i === 1" [class.reveal-delay-card-3]="i === 2">
+        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-accent-border bg-accent-bg font-mono text-[12px] text-accent-text">{{ i + 1 }}</span>
+        <div class="flex flex-col gap-1 pt-1">
+          <h3 class="font-display text-[17px] font-medium tracking-[-0.01em]">{{ step.title }}</h3>
+          <p class="text-[14.5px] leading-[1.6] text-text-muted">{{ step.desc }}</p>
+        </div>
+      </li>
+    }
+  </ol>
+</section>
+
+<section id="interes" class="page-gutter scroll-mt-24 border-t border-line py-16 sm:py-20">
+  <div class="grid grid-cols-1 gap-10 rounded-3xl border border-border bg-bg-elevated p-6 sm:p-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-14 lg:p-14" style="box-shadow: var(--shadow-panel)">
+    <div class="flex flex-col gap-4">
+      <span class="font-mono text-[10.5px] tracking-[0.16em] text-accent-text">¿TE INTERESA?</span>
+      <h2 class="font-display text-[26px] font-medium leading-[1.2] tracking-[-0.015em] text-balance sm:text-[32px]">Te avisamos cuando esté lista</h2>
+      <p class="text-[15px] leading-[1.65] text-text-muted">Déjanos tus datos y cuéntanos cómo facturas hoy. Nos ayuda a priorizar lo que más necesitas.</p>
+    </div>
+    <app-lead-form variant="billing" submitLabel="Quiero que me avisen" />
+  </div>
+</section>
+
+<section class="page-gutter flex flex-col gap-8 border-t border-line pb-20 pt-16 sm:gap-10 sm:pb-24 sm:pt-20">
+  <app-section-title eyebrow="PREGUNTAS FRECUENTES" title="Sobre la facturación electrónica" />
+  <app-faq [items]="faq" />
+</section>

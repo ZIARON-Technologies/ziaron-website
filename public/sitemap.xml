@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Mantener sincronizado con app.routes.ts (rutas prerenderizadas). -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://ziaron.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://ziaron.com/productos/restaurant-os</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://ziaron.com/productos/facturacion</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ziaron.com/nosotros</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://ziaron.com/contacto</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://ziaron.com/legal/privacidad</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+  <url><loc>https://ziaron.com/legal/terminos</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+</urlset>
