@@ -255,6 +255,9 @@ su UI o muestra "en preparación". Para activar:
   `dist/ziaron-website/browser`; dominio `ziaron.com`; activar Analytics.
   Verificar que `/nosotros` sirve el HTML prerenderizado y que una URL
   inexistente cae en el 404 (`index.csr.html`).
+- Formspree: tras publicar, activar **Restrict to Domain** = `ziaron.com`
+  (Settings del **proyecto**, no del formulario; disponible en plan gratis).
+  No activarlo antes: podría bloquear las pruebas desde `localhost`.
 - Google Search Console: verificar dominio y enviar `sitemap.xml`.
 - Lighthouse sobre el sitio publicado (en local: SEO 100, accesibilidad
   96–100, performance desktop 98–99; performance móvil local ~72 no es
