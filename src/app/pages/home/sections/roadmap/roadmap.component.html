@@ -1,0 +1,39 @@
+<section id="roadmap" class="page-gutter flex w-full flex-col gap-8 border-t border-line py-16 sm:gap-10 sm:py-20 lg:py-24">
+  <app-section-title
+    eyebrow="ROADMAP"
+    title="Hacia dónde vamos"
+    subtitle="Construimos el ecosistema por fases: primero la base y el primer producto, luego operación e inteligencia."
+  />
+
+  <ol class="grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-3">
+    @for (phase of phases; track phase.n; let i = $index) {
+      <li
+        appReveal
+        class="relative flex flex-col gap-5 rounded-2xl border p-6 sm:p-7"
+        [class]="phase.active ? 'border-accent-border bg-accent-bg' : 'border-border bg-bg-elevated'"
+        [class.reveal-delay-card-1]="i === 0"
+        [class.reveal-delay-card-2]="i === 1"
+        [class.reveal-delay-card-3]="i === 2"
+      >
+        <div class="flex items-center justify-between gap-3">
+          <span class="font-mono text-[11px] tracking-[0.12em]" [class]="phase.active ? 'text-accent-text' : 'text-text-dim'">{{ phase.n.toUpperCase() }}</span>
+          @if (phase.active) {
+            <span class="flex items-center gap-2 font-mono text-[10px] tracking-[0.1em] text-accent-text">
+              <span class="roadmap-pulse block h-1.5 w-1.5 rounded-full bg-accent"></span>
+              EN CURSO
+            </span>
+          }
+        </div>
+        <h3 class="font-display text-[22px] font-medium tracking-[-0.015em]">{{ phase.label }}</h3>
+        <ul class="flex flex-col gap-2 border-t pt-4" [class]="phase.active ? 'border-accent-border' : 'border-line'">
+          @for (item of phase.items; track item) {
+            <li class="flex items-center gap-2.5 text-[14px] text-text-muted">
+              <span class="block h-1 w-1 rounded-full" [class]="phase.active ? 'bg-accent' : 'bg-text-dim'"></span>
+              {{ item }}
+            </li>
+          }
+        </ul>
+      </li>
+    }
+  </ol>
+</section>

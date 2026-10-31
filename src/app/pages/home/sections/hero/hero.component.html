@@ -1,0 +1,43 @@
+<section id="inicio" class="page-gutter grid w-full grid-cols-1 items-center gap-12 pb-16 pt-10 sm:pb-20 sm:pt-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-16 lg:pb-24 lg:pt-20">
+  <div class="flex flex-col gap-6">
+    <!-- En móvil el header no muestra la pill: se repite acá (misma info). -->
+    <span class="sm:hidden"><app-status-pill label="En construcción" /></span>
+
+    <div appReveal class="reveal-delay-1 flex items-center gap-3 font-mono text-[10px] tracking-[0.16em] text-accent-text sm:text-[11.5px]">
+      <span class="h-px w-4 shrink-0 sm:w-[26px]" style="background: linear-gradient(90deg, #8B5CF6, var(--accent))"></span>
+      <span>ZIARON TECHNOLOGIES · LIMA, PERÚ</span>
+    </div>
+
+    <!-- Frase de marca: narrativa oficial (DESIGN.md §1), usar tal cual. -->
+    <h1 appReveal class="reveal-delay-2 font-display text-[34px] font-medium leading-[1.12] tracking-[-0.02em] text-balance sm:text-[46px] lg:text-[54px] xl:text-[60px]">
+      No desarrollamos únicamente software.
+      <span class="hero-gradient-text block">Diseñamos plataformas inteligentes que impulsan empresas.</span>
+    </h1>
+
+    <p appReveal class="reveal-delay-3 max-w-[54ch] text-[15.5px] leading-[1.65] text-text-muted sm:text-[17px] lg:text-[18px]">
+      Creamos plataformas SaaS propias —en la nube y con inteligencia artificial— para que los
+      negocios del Perú operen con sistemas modernos. Empezamos por la gastronomía con
+      <strong class="font-medium text-text">Restaurant OS</strong>.
+    </p>
+
+    <div appReveal class="reveal-delay-3 flex flex-col gap-3 pt-1 sm:flex-row">
+      <a routerLink="/productos/restaurant-os" class="btn btn-primary">
+        Conoce Restaurant OS
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+      </a>
+      <a routerLink="/contacto" class="btn btn-ghost">Contáctanos</a>
+    </div>
+
+    <div appReveal class="reveal-delay-3 mt-2 grid grid-cols-1 gap-1.5 font-mono text-[10.5px] tracking-[0.06em] text-text-dim sm:flex sm:items-center sm:gap-[26px] sm:text-[11.5px]">
+      <span>PLATAFORMAS EN EL ECOSISTEMA — {{ totalCount }}</span>
+      <span class="hidden h-3 w-px bg-line sm:block"></span>
+      <span>EN CONSTRUCCIÓN — {{ buildingCount }}</span>
+      <span class="hidden h-3 w-px bg-line sm:block"></span>
+      <span>SITIO {{ siteVersion }}</span>
+    </div>
+  </div>
+
+  <div appReveal class="reveal-delay-panel w-full">
+    <app-nexus-panel [compact]="true" />
+  </div>
+</section>

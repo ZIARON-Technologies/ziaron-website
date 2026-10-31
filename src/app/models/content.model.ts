@@ -7,9 +7,22 @@ export interface ProductNode {
   desc: string;
 }
 
+/** Ícono de las 4 tarjetas de "Qué hacemos" — cada uno es un SVG line
+ * dibujado a medida en `CapabilitiesComponent` (ver handoff de diseño),
+ * no un asset de marca. */
+export type CapabilityIcon = 'saas' | 'ai' | 'automation' | 'cloud';
+
+export interface Capability {
+  icon: CapabilityIcon;
+  title: string;
+  desc: string;
+}
+
 export interface Principle {
   n: string;
   title: string;
+  /** Bajada de una línea (aprobada por el usuario, 2026-10-31). */
+  desc: string;
 }
 
 export interface Phase {
@@ -17,4 +30,38 @@ export interface Phase {
   label: string;
   items: string[];
   active: boolean;
+}
+
+/** Producto destacado en el home (bloque `#productos`) con página propia. */
+export interface FeaturedProduct {
+  name: string;
+  status: ProductStatus;
+  route: string;
+  tagline: string;
+  highlights: string[];
+}
+
+/** Grupo de módulos de Restaurant OS (04-restaurant-os/README.md). */
+export interface ModuleGroup {
+  title: string;
+  desc: string;
+  items: string[];
+}
+
+/** Link de navegación. `fragment` = ancla dentro del home (`/#productos`). */
+export interface NavLink {
+  label: string;
+  route: string;
+  fragment?: string;
+}
+
+export interface FooterColumn {
+  title: string;
+  links: (NavLink & { soon?: boolean })[];
+}
+
+/** Valor de la empresa (cultura), distinto de los principios de ingeniería. */
+export interface CompanyValue {
+  title: string;
+  desc: string;
 }

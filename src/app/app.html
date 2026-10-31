@@ -1,7 +1,20 @@
+<!-- Shell del sitio: lo que se repite en TODAS las rutas. El contenido de
+     cada página entra por <router-outlet /> dentro de <main>.
+     Capas decorativas de fondo (retícula + glow): cubren toda la página,
+     por eso viven acá y no dentro de un componente (ver app.scss). -->
+<div class="page-dot-grid pointer-events-none absolute inset-0 z-0"></div>
+<div class="page-glow pointer-events-none absolute -right-[200px] -top-[220px] z-0 h-[760px] w-[760px] rounded-full"></div>
+
+<app-loader />
+<app-scroll-progress />
+
 <app-header />
 
-<main class="flex w-full flex-1 flex-col overflow-y-auto">
-  <app-home />
+<main class="relative z-10 flex w-full flex-1 flex-col">
+  <router-outlet />
 </main>
 
 <app-footer />
+<app-whatsapp-float />
+<app-back-to-top />
+<app-toast />

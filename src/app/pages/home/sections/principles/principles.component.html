@@ -1,0 +1,26 @@
+<section id="como-trabajamos" class="page-gutter flex w-full flex-col gap-8 border-t border-line py-16 sm:gap-10 sm:py-20 lg:py-24">
+  <app-section-title
+    eyebrow="CÓMO TRABAJAMOS"
+    title="Principios de ingeniería"
+    subtitle="Las reglas que guían cada decisión técnica de ZIARON, desde el primer producto."
+    meta="06 PRINCIPIOS"
+  />
+
+  <!-- Grilla con bordes compartidos (gap-px sobre fondo de línea): se lee
+       como una tabla técnica, no como tarjetas sueltas. -->
+  <div class="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-border bg-line sm:grid-cols-2 lg:grid-cols-3">
+    @for (principle of principles; track principle.n; let i = $index) {
+      <div
+        appReveal
+        class="flex flex-col gap-2 bg-bg-elevated p-6 sm:p-7"
+        [class.reveal-delay-card-1]="i % 3 === 0"
+        [class.reveal-delay-card-2]="i % 3 === 1"
+        [class.reveal-delay-card-3]="i % 3 === 2"
+      >
+        <span class="font-mono text-[11px] text-accent-text">{{ principle.n }}</span>
+        <h3 class="font-display text-[17px] font-medium tracking-[-0.01em] sm:text-lg">{{ principle.title }}</h3>
+        <p class="text-[14px] leading-[1.6] text-text-muted">{{ principle.desc }}</p>
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,87 @@
+:host {
+  display: contents;
+}
+
+/* Header fijo (sticky, ver .html) que encoge y se eleva al bajar el scroll
+   — pedido explícito del usuario ("que se mantenga fija" + "una animación").
+   Se anima con transiciones CSS en vez de Tailwind arbitrary classes dentro
+   de [class.x] (Angular no permite corchetes dentro del nombre de una
+   binding de clase), y respeta prefers-reduced-motion. */
+.app-header {
+  transition:
+    height 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.app-header--scrolled {
+  height: 56px;
+  box-shadow: var(--shadow-panel);
+  background-color: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+@media (min-width: 640px) {
+  .app-header--scrolled {
+    height: 64px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-header--scrolled {
+    height: 72px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-header {
+    transition: none;
+  }
+}
+
+/* Indicador de link activo (ruta actual o sección del home visible, ver
+   header.component.ts): subrayado de acento que crece desde la izquierda.
+   Pedido explícito del usuario: marcar la opción por la que se va pasando. */
+.nav-link {
+  position: relative;
+  padding-bottom: 3px;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+
+.nav-link--active {
+  color: var(--accent) !important;
+}
+
+.nav-link--active::after {
+  transform: scaleX(1);
+}
+
+/* Entrada del menú móvil: fade + leve desplazamiento. */
+.mobile-menu {
+  animation: mobile-menu-in 0.2s ease-out;
+}
+
+@keyframes mobile-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

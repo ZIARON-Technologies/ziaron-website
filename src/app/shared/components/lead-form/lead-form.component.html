@@ -1,0 +1,89 @@
+@if (sent()) {
+  <div class="flex flex-col items-start gap-3 rounded-2xl border border-accent-border bg-accent-bg p-6 sm:p-8" role="status">
+    <span class="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-bg">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+    </span>
+    <h3 class="font-display text-[20px] font-medium">¡Listo, ya estás en contacto con nosotros!</h3>
+    <p class="max-w-[52ch] text-[14.5px] leading-[1.6] text-text-muted">Revisaremos tu mensaje y te escribiremos por el medio que nos dejaste.</p>
+    <button type="button" class="link-arrow" (click)="sent.set(false)">Enviar otro mensaje</button>
+  </div>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col gap-5">
+    @if (!enabled) {
+      <p class="rounded-xl border border-border bg-bg px-4 py-3 font-mono text-[11px] leading-[1.6] tracking-[0.04em] text-text-muted">
+        FORMULARIO EN PREPARACIÓN · Estamos habilitando el envío. Muy pronto podrás usarlo.
+      </p>
+    }
+
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      @if (show('nombre')) {
+        <label class="field">
+          <span class="field__label">Tu nombre @if (isRequired('nombre')) { <b>*</b> }</span>
+          <input class="field__input" formControlName="nombre" autocomplete="name" [class.field__input--error]="invalid('nombre')" />
+          @if (invalid('nombre')) { <span class="field__error">Escribe tu nombre.</span> }
+        </label>
+      }
+      @if (show('negocio')) {
+        <label class="field">
+          <span class="field__label">{{ variant() === 'billing' ? 'Empresa' : 'Nombre del negocio' }} @if (isRequired('negocio')) { <b>*</b> }</span>
+          <input class="field__input" formControlName="negocio" autocomplete="organization" [class.field__input--error]="invalid('negocio')" />
+          @if (invalid('negocio')) { <span class="field__error">Escribe el nombre de tu negocio.</span> }
+        </label>
+      }
+      @if (show('tipo')) {
+        <label class="field">
+          <span class="field__label">Tipo de negocio <b>*</b></span>
+          <select class="field__input" formControlName="tipo" [class.field__input--error]="invalid('tipo')">
+            <option value="" disabled>Selecciona una opción</option>
+            @for (t of businessTypes; track t) { <option [value]="t">{{ t }}</option> }
+          </select>
+          @if (invalid('tipo')) { <span class="field__error">Elige el tipo de negocio.</span> }
+        </label>
+      }
+      @if (show('distrito')) {
+        <label class="field">
+          <span class="field__label">Distrito / ciudad <b>*</b></span>
+          <input class="field__input" formControlName="distrito" placeholder="Ej. San Juan de Miraflores" [class.field__input--error]="invalid('distrito')" />
+          @if (invalid('distrito')) { <span class="field__error">¿Dónde está tu negocio?</span> }
+        </label>
+      }
+      @if (show('whatsapp')) {
+        <label class="field">
+          <span class="field__label">WhatsApp @if (isRequired('whatsapp')) { <b>*</b> } @else { <i>(opcional)</i> }</span>
+          <input class="field__input" formControlName="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="9XX XXX XXX" [class.field__input--error]="invalid('whatsapp')" />
+          @if (invalid('whatsapp')) { <span class="field__error">Escribe un celular de 9 dígitos (ej. 987 654 321).</span> }
+        </label>
+      }
+      @if (show('email')) {
+        <label class="field">
+          <span class="field__label">Correo @if (isRequired('email')) { <b>*</b> } @else { <i>(opcional)</i> }</span>
+          <input class="field__input" formControlName="email" type="email" autocomplete="email" placeholder="tu@correo.com" [class.field__input--error]="invalid('email')" />
+          @if (invalid('email')) { <span class="field__error">Escribe un correo válido.</span> }
+        </label>
+      }
+      @if (show('mensaje')) {
+        <label class="field sm:col-span-2">
+          <span class="field__label">{{ variant() === 'contact' ? '¿En qué podemos ayudarte?' : 'Comentario' }} @if (isRequired('mensaje')) { <b>*</b> } @else { <i>(opcional)</i> }</span>
+          <textarea class="field__input min-h-[120px] resize-y py-3" formControlName="mensaje" [class.field__input--error]="invalid('mensaje')"></textarea>
+          @if (invalid('mensaje')) { <span class="field__error">Cuéntanos brevemente qué necesitas.</span> }
+        </label>
+      }
+    </div>
+
+    <!-- Campo trampa antispam: invisible para personas, los bots lo llenan. -->
+    <input type="text" formControlName="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="absolute -left-[9999px] h-0 w-0 opacity-0" />
+
+    <label class="flex items-start gap-3 text-[13.5px] leading-[1.55] text-text-muted">
+      <input type="checkbox" formControlName="consentimiento" class="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent)]" />
+      <span>
+        Acepto que ZIARON Technologies use estos datos solo para responder mi solicitud, según la
+        <a routerLink="/legal/privacidad" class="text-accent-text underline underline-offset-2 hover:text-accent">Política de privacidad</a>.
+        @if (invalid('consentimiento')) { <span class="field__error block">Necesitamos tu autorización para poder responderte.</span> }
+      </span>
+    </label>
+
+    <button type="submit" class="btn btn-primary self-start" [disabled]="!enabled || sending()" [class.opacity-50]="!enabled" [class.cursor-not-allowed]="!enabled">
+      @if (sending()) { Enviando… } @else { {{ enabled ? submitLabel() : 'Disponible pronto' }} }
+    </button>
+  </form>
+}

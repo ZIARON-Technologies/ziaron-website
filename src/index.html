@@ -11,14 +11,39 @@
   </script>
   <title>ZIARON — Diseñamos plataformas inteligentes</title>
   <meta name="description" content="ZIARON Technologies. Ingeniería de plataformas SaaS, inteligencia artificial, automatización e infraestructura cloud.">
+  <!-- Título, description, Open Graph y canonical por página los pone
+       ZiaronTitleStrategy (core/services/title.strategy.ts) en el prerender. -->
+  <meta name="theme-color" content="#05070c" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f6f8fb" media="(prefers-color-scheme: light)">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "ZIARON Technologies",
+      "url": "https://ziaron.com",
+      "logo": "https://ziaron.com/brand/favicon/apple-touch-icon.png",
+      "description": "Empresa peruana de ingeniería tecnológica: plataformas SaaS, inteligencia artificial, automatización e infraestructura cloud.",
+      "address": { "@type": "PostalAddress", "addressLocality": "Lima", "addressCountry": "PE" }
+    }
+  </script>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/x-icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" type="image/svg+xml" href="/brand/favicon/favicon.svg">
+  <link rel="apple-touch-icon" href="/brand/favicon/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Sin JavaScript: el contenido prerenderizado (SSG) debe verse igual.
+       Se anulan el estado inicial oculto de `reveal` y el loader. -->
+  <noscript>
+    <style>
+      .reveal { opacity: 1 !important; transform: none !important; }
+      .loader-overlay { display: none !important; }
+    </style>
+  </noscript>
 </head>
-<body class="h-screen w-full overflow-hidden bg-bg font-body text-text antialiased transition-colors">
-  <app-root class="block h-full w-full"></app-root>
+<body class="min-h-screen w-full bg-bg font-body text-text antialiased transition-colors">
+  <app-root class="block min-h-full w-full"></app-root>
 </body>
 </html>

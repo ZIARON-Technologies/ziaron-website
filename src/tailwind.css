@@ -4,42 +4,223 @@
    directo) — así soportamos claro/oscuro/automático desde la app. */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Tokens sincronizados con el handoff de Claude Design aprobado
+   (design_handoff_ziaron_landing/README.md) — alta fidelidad, no aproximar. */
 :root {
   /* Tema claro */
   --bg: #f6f8fb;
   --bg-elevated: #ffffff;
-  --border: #e1e6ee;
   --text: #0b1220;
   --text-muted: rgba(11, 18, 32, 0.62);
-  --text-faint: rgba(11, 18, 32, 0.4);
-  --accent: #0d9488;
-  --accent-dim: #bfe8e3;
+  --text-dim: rgba(11, 18, 32, 0.42);
+  --line: rgba(11, 18, 32, 0.09);
+  --border: rgba(11, 18, 32, 0.1);
+  --accent: #0e7490;
+  --accent-text: #0e7490;
+  --accent-bg: rgba(14, 116, 144, 0.07);
+  --accent-border: rgba(14, 116, 144, 0.28);
+  --ctl-bg: #ffffff;
+  --ctl-border: rgba(11, 18, 32, 0.12);
+  --pill-on: rgba(14, 116, 144, 0.12);
+  --dot-grid: rgba(15, 23, 42, 0.1);
+  --shadow-panel: 0 26px 60px -34px rgba(11, 18, 32, 0.35);
 }
 
 .dark {
   /* Tema oscuro (branding ZIARON: azul profundo + cian tecnológico) */
   --bg: #05070c;
   --bg-elevated: #0e1626;
-  --border: #232833;
-  --text: #f4f6fa;
-  --text-muted: rgba(244, 246, 250, 0.6);
-  --text-faint: rgba(244, 246, 250, 0.35);
-  --accent: #22e8da;
-  --accent-dim: #0f5f5a;
+  --text: #f2f6fb;
+  --text-muted: rgba(230, 237, 247, 0.6);
+  --text-dim: rgba(230, 237, 247, 0.38);
+  --line: rgba(230, 237, 247, 0.09);
+  --border: rgba(230, 237, 247, 0.11);
+  --accent: #22d3ee;
+  --accent-text: #7fe6f7;
+  --accent-bg: rgba(34, 211, 238, 0.07);
+  --accent-border: rgba(34, 211, 238, 0.28);
+  --ctl-bg: rgba(255, 255, 255, 0.03);
+  --ctl-border: rgba(230, 237, 247, 0.12);
+  --pill-on: rgba(34, 211, 238, 0.14);
+  --dot-grid: rgba(99, 102, 241, 0.16);
+  --shadow-panel: 0 28px 70px -34px rgba(0, 0, 0, 0.9);
 }
 
 @theme inline {
   --color-bg: var(--bg);
   --color-bg-elevated: var(--bg-elevated);
   --color-border: var(--border);
+  --color-line: var(--line);
   --color-text: var(--text);
   --color-text-muted: var(--text-muted);
-  --color-text-faint: var(--text-faint);
+  --color-text-dim: var(--text-dim);
   --color-accent: var(--accent);
-  --color-accent-dim: var(--accent-dim);
+  --color-accent-text: var(--accent-text);
+  --color-accent-bg: var(--accent-bg);
+  --color-accent-border: var(--accent-border);
+  --color-ctl-bg: var(--ctl-bg);
+  --color-ctl-border: var(--ctl-border);
+  --color-pill-on: var(--pill-on);
 
   /* ZIARON brand typography */
   --font-display: "Space Grotesk", sans-serif;
   --font-body: "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* ── Componentes de UI compartidos ─────────────────────────────────────
+   Botones/links de acción (CTA). Viven acá (y no como componente Angular)
+   porque se aplican tanto a <a routerLink> como a <button>, y solo son
+   estilo. Usan los tokens semánticos, así siguen el tema sin `dark:`.
+   - .btn-primary: acción principal (una por bloque como máximo).
+   - .btn-ghost:   acción secundaria al lado de la principal.
+   - .link-arrow:  link de texto con flecha (tarjetas, "ver más"). */
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 2.75rem;
+    padding-inline: 1.25rem;
+    border-radius: 0.625rem;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+    outline: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+  .btn:focus-visible {
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn-sm {
+    height: 2.25rem;
+    padding-inline: 0.9rem;
+    font-size: 0.82rem;
+  }
+  .btn-primary {
+    background: var(--text);
+    color: var(--bg);
+  }
+  .btn-primary:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .btn-ghost {
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text);
+  }
+  .btn-ghost:hover {
+    border-color: var(--accent-border);
+    color: var(--accent-text);
+  }
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--accent-text);
+    text-decoration: none;
+    border-radius: 0.25rem;
+    outline: none;
+  }
+  .link-arrow:hover {
+    color: var(--accent);
+  }
+  .link-arrow:hover .link-arrow__icon {
+    transform: translateX(3px);
+  }
+  .link-arrow:focus-visible {
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+  .link-arrow__icon {
+    transition: transform 0.2s ease;
+  }
+
+  /* Contenedor horizontal estándar de cada bloque de página: full-bleed
+     (sin max-width, decisión previa del usuario) con padding lateral que
+     crece con el viewport — mismos valores que header y footer, para que
+     todo quede alineado a la misma columna. */
+  .page-gutter {
+    padding-inline: 22px;
+  }
+  @media (min-width: 640px) {
+    .page-gutter { padding-inline: 44px; }
+  }
+  @media (min-width: 1024px) {
+    .page-gutter { padding-inline: 72px; }
+  }
+}
+
+/* ── Campos de formulario (LeadFormComponent) ─────────────────────────── */
+@layer components {
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .field__label {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .field__label b {
+    color: var(--accent-text);
+    font-weight: 500;
+  }
+  .field__label i {
+    font-style: normal;
+    font-weight: 400;
+    color: var(--text-muted); /* text-dim no llega a AA en 13px */
+  }
+  .field__input {
+    width: 100%;
+    min-height: 2.75rem;
+    padding-inline: 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 0.625rem;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 0.92rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .field__input::placeholder {
+    color: var(--text-dim);
+  }
+  .field__input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-bg);
+  }
+  /* Autocompletado del navegador (Chrome/Edge): por defecto pinta el campo
+     celeste claro, que rompe el tema oscuro. Se fuerza el fondo y el texto
+     del tema con una sombra interior (única forma que respeta Chrome). */
+  .field__input:-webkit-autofill,
+  .field__input:-webkit-autofill:hover,
+  .field__input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--text);
+    caret-color: var(--text);
+    box-shadow: 0 0 0 1000px var(--bg) inset;
+    transition: background-color 9999s ease-out 0s;
+  }
+  .field__input:-webkit-autofill:focus {
+    box-shadow: 0 0 0 1000px var(--bg) inset, 0 0 0 3px var(--accent-bg);
+  }
+  .field__input--error {
+    border-color: rgba(239, 68, 68, 0.6);
+  }
+  .field__error {
+    font-size: 0.78rem;
+    color: #ef4444;
+  }
+  .dark .field__error {
+    color: #f87171;
+  }
 }

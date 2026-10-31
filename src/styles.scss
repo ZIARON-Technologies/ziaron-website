@@ -9,6 +9,18 @@ html {
   color: var(--bg);
 }
 
+/* Transición suave por defecto al cambiar de tema (claro/oscuro/automático):
+   sin esto, los colores derivados de las CSS custom properties (--bg,
+   --border, --text, etc.) cambian de golpe en cualquier contenedor que no
+   tenga su propia utilidad `transition-colors`. Usa :where() (especificidad
+   0) para no pisar transiciones más específicas ya definidas en componentes
+   (ej. el hover de las tarjetas de "Qué hacemos"). Respeta
+   prefers-reduced-motion vía la media query de abajo, que ya fuerza
+   duration 0.01ms globalmente. */
+:where(body, header, footer, main, section, article, .page-glow) {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
 /* Sistema de "reveal" compartido — ver shared/directives/reveal.directive.ts.
    La directiva solo agrega/quita clases; la apariencia vive acá para que
    cualquier componente lo use sin duplicar CSS. */
@@ -27,6 +39,22 @@ html {
 .reveal-delay-2.visible { transition-delay: 0.15s; }
 .reveal-delay-3.visible { transition-delay: 0.28s; }
 
+/* Cascada de las 4 tarjetas de "Qué hacemos" — ritmo más rápido y parejo
+   que el de arriba (que es para el stack del hero, no para una grilla):
+   las tarjetas ya están juntas en el viewport cuando entran, así que un
+   stagger corto (80ms) se siente como una lista "encendiéndose" en orden,
+   sin sentirse lento. Ver CapabilitiesComponent. */
+.reveal-delay-card-1.visible { transition-delay: 0s; }
+.reveal-delay-card-2.visible { transition-delay: 0.08s; }
+.reveal-delay-card-3.visible { transition-delay: 0.16s; }
+.reveal-delay-card-4.visible { transition-delay: 0.24s; }
+
+/* El panel "Nexus" se revela último, después del bloque de capacidades —
+   es deliberado: el panel de estado del sistema "arranca" al final de la
+   secuencia, como el propio ecosistema que describe (ver DESIGN.md,
+   sección "Motion"). */
+.reveal-delay-panel.visible { transition-delay: 0.32s; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -34,4 +62,15 @@ html {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Punto "EN CURSO" del roadmap: pulso suave de acento (anulado por
+   prefers-reduced-motion más arriba). */
+.roadmap-pulse {
+  animation: roadmap-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes roadmap-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent-border); }
+  50% { box-shadow: 0 0 0 5px transparent; }
 }

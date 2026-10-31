@@ -1,262 +1,305 @@
 # ZIARON Website — contexto para trabajar más rápido
 
-Landing page institucional de ZIARON Technologies. Es **solo informativa**
-(misión, visión, valores, ecosistema de productos): no hay panel
-administrativo ni autenticación en este repo. Es una **SPA de una sola
-página** con scroll a secciones ancladas (patrón `scrollIntoView`, ver
-`HeaderComponent.scrollTo()`) — no usa Angular Router.
+Sitio institucional de ZIARON Technologies (Angular 22 + Tailwind v4). Desde
+la **Landing v2** ya no es una página única: es un **sitio con rutas reales,
+prerenderizado a HTML estático (SSG)**, con un home con secciones ancladas y
+páginas propias para productos y empresa. Sin backend, sin auth.
 
-Contenido basado en `ZIARON_Foundation_v0.3.md` (documento fundacional del
-repo `ziaron-foundation`). Si el contenido de negocio cambia, ese es el
-documento fuente a revisar primero.
+- Plan de trabajo por fases y estado: **`docs/PLAN-LANDING-V2.md`** (leer
+  primero; marcar ahí lo que se avance).
+- Sistema visual (colores, tipografías, motion, isotipo): **`DESIGN.md`**.
+- Fuente del contenido de negocio: repo `ziaron-foundation` (01-company,
+  03-products, 04-restaurant-os, 06-engineering, 09-roadmap). Si el
+  negocio cambia, se edita `src/app/data/content.data.ts`, no los templates.
 
-**Estado actual de la página (deliberado, no es un olvido):** solo se
-muestran el hero, el nav y el footer. Las secciones de Ecosistema,
-Principios y Hoja de ruta están ocultas a pedido del usuario mientras el
-sitio sigue en construcción — el contenido ya está listo en
-`src/app/data/content.data.ts`, solo falta crear los componentes
-(`EcosystemComponent`, `PrinciplesComponent`, `RoadmapComponent`) y
-agregarlos a `app.html` cuando se quiera reactivarlas. El footer tampoco
-muestra correo de contacto todavía, a propósito.
+## Comandos
+
+```bash
+npm install     # obligatorio tras traer la rama: se agregaron @angular/ssr y @angular/platform-server
+ng serve        # desarrollo (http://localhost:4200)
+ng build        # producción + prerender → dist/ziaron-website/browser
+ng test
+```
+
+## Estado actual (rama `feature/landing-v2`)
+
+Fases 0–6 del plan implementadas en código. Formularios conectados a
+Formspree (cuenta del usuario, formulario "ZIARON Website"). Lo que falta
+depende de cuentas reales del usuario (ver "Activar canales" y
+"Lanzamiento"): WhatsApp, correo con dominio, deploy en Vercel, Search
+Console y revisión legal.
 
 ## Stack
 
-- Angular 22 (standalone, sin NgModules)
-- Tailwind CSS v4, integrado vía PostCSS (no vía `tailwind.config.js` — v4 no lo usa)
-- Sin librería de componentes (Bootstrap/Material) — decisión deliberada para no pelear
-  contra la identidad visual custom.
+- Angular 22.2 (standalone, zoneless, signals; sin NgModules)
+- `@angular/ssr` solo para **prerender en build** (`outputMode: "static"` en
+  `angular.json`) — en producción no hay servidor Node, son HTML estáticos.
+- Tailwind CSS v4 vía PostCSS (sin `tailwind.config.js`)
+- Sin librería de componentes (Bootstrap/Material) — decisión deliberada.
+- Versiones de `@angular/*` alineadas (misma minor). `@angular/platform-server`
+  y `@angular/ssr` deben subir junto con `@angular/core` (usar `ng update`).
+
+## Rutas (`app.routes.ts` + `app.routes.server.ts`)
+
+| Ruta | Componente | Render |
+|---|---|---|
+| `/` | `pages/home` (eager) | Prerender |
+| `/productos/restaurant-os` | `pages/restaurant-os` (lazy) | Prerender |
+| `/productos/facturacion` | `pages/billing` (lazy) | Prerender |
+| `/nosotros` | `pages/about` (lazy) | Prerender |
+| `/contacto` | `pages/contact` (lazy) | Prerender |
+| `/legal/privacidad` | `pages/legal/privacy` (lazy) | Prerender |
+| `/legal/terminos` | `pages/legal/terms` (lazy) | Prerender |
+| `**` | `pages/not-found` (lazy) | Client (fallback `index.csr.html`) |
+
+**Checklist al agregar una ruta:**
+1. `app.routes.ts` con `title` y `data.description` (≤ 160 caracteres).
+2. `app.routes.server.ts` (si no, no se prerenderiza).
+3. `public/sitemap.xml`.
+4. Footer (`FOOTER_COLUMNS`) y, si corresponde, nav (`NAV_LINKS`).
+
+## SEO (`core/services/title.strategy.ts`)
+
+`ZiaronTitleStrategy` corre en cada navegación y en el prerender, así el
+HTML estático ya trae: `<title>` ("`<título>` · ZIARON Technologies"; home
+"ZIARON Technologies — ..."), meta description (`data.description`), Open
+Graph + Twitter card (imagen `public/brand/social/og-ziaron.png`, 1200×630:
+wordmark + frase de marca sobre el fondo del sitio — NO usar
+`ziaron-foundation/.../open-graph/ziaron-og.svg`, que junta isotipo y
+wordmark, ver "Regla de marca"), `<link rel="canonical">` y robots
+(`data.noindex: true` en el 404). En `index.html`: JSON-LD `Organization`,
+`theme-color` por tema, favicon SVG + apple-touch-icon
+(`public/brand/favicon/`, del branding oficial). `public/robots.txt` y
+`public/sitemap.xml` (estático, mantener a mano).
+
+## Analítica
+
+Vercel Web Analytics (`@vercel/analytics`, `inject()` en `App`, solo
+navegador y solo producción). Sin cookies, datos agregados — coherente con
+la Política de privacidad. Hay que **activar Analytics en el proyecto de
+Vercel**; en local la petición a `/_vercel/insights/script.js` falla y es
+normal.
+
+`vercel.json` reescribe a `/index.csr.html` cualquier URL que no exista como
+archivo (Vercel sirve primero los HTML prerenderizados). Verificar al hacer
+el deploy (Fase 6).
 
 ## Arquitectura de carpetas (`src/app/`)
 
 ```
-app/
-├── app.ts / .html / .scss     Shell: compone header + main(home) + footer, layout de página completa
-├── core/
-│   └── services/
-│       └── theme.service.ts   Estado del tema (signal), localStorage, matchMedia
-├── models/                    Interfaces y tipos (sin lógica)
-│   ├── theme.model.ts         ThemeMode
-│   └── content.model.ts       ProductNode, Principle, Phase
-├── data/
-│   └── content.data.ts        Datos reales (PRODUCTS, PRINCIPLES, PHASES) — sincronizados
-│                               con ziaron-foundation, aún no renderizados (ver estado arriba)
-├── pages/
-│   └── home/                  Página "Home": compone el contenido de <main> (hoy solo <app-hero />)
-├── shared/
-│   └── directives/
-│       └── reveal.directive.ts  `appReveal` — IntersectionObserver, agrega .visible al entrar al viewport
-└── components/
-    ├── header/                Nav + status pill + theme-toggle
-    ├── hero/                  Sección "Inicio" — hoy único contenido de Home
-    ├── footer/
-    └── theme-toggle/          Grupo de 3 botones (claro/auto/oscuro), inyecta ThemeService
+app.ts / .html / .scss       Shell: fondo decorativo + loader + scroll-progress + header + <router-outlet> + footer + back-to-top
+app.config.ts                Router (anclas + scroll), hidratación, TitleStrategy
+app.config.server.ts         Config extra solo para el prerender (provideServerRendering)
+app.routes.ts / .server.ts   Rutas cliente / modo de render por ruta
+core/services/
+  theme.service.ts           Tema claro/oscuro/auto (SSR-safe)
+  title.strategy.ts          Título + meta + Open Graph + canonical por ruta
+  toast.service.ts           Notificaciones efímeras
+data/content.data.ts         TODOS los textos de negocio y la navegación (ver abajo)
+data/site.config.ts          Canales reales (correo, WhatsApp, endpoint de formularios) — ver "Activar canales"
+models/                      Interfaces (sin lógica)
+layout/                      Piezas del shell, presentes en todas las rutas
+  header/                    Wordmark + nav + CTA + tema + menú móvil
+  footer/                    Columnas (marca, Productos, Empresa, Legal) + copyright
+  loader/                    Overlay de carga inicial (isotipo animado)
+  theme-toggle/
+pages/                       Una carpeta por ruta
+  home/                      Solo compone secciones (sections/*)
+    sections/                hero, capabilities, products, principles, roadmap, cta
+  restaurant-os/             (+ concept-board/: tablero de pedidos ilustrativo)
+  billing/ about/ contact/ not-found/
+  legal/                     privacy, terms (+ legal-layout.scss compartido)
+shared/
+  components/                section-title, page-header, status-pill, nexus-panel, scroll-progress,
+                             back-to-top, toast, lead-form, faq, whatsapp-float
+  directives/reveal.directive.ts
 ```
 
-### Inspiración: `iamwgp-portfolio`
+Regla: si algo aparece en una sola página va en `pages/<página>/`; si se usa
+en 2+ lugares va en `shared/components/`; si está en todas las rutas va en
+`layout/`.
 
-El otro proyecto Angular del usuario (`D:\GIT\WGOMEZPR\iamwgp-portfolio`)
-usa una arquitectura hermana (`core/services`, `shared/components`,
-`shared/directives`, feature folders) y ya tiene resuelto en Tailwind/SCSS
-patrones que ZIARON todavía no necesita pero puede reutilizar cuando
-crezca:
+## Datos (`data/content.data.ts`)
 
-- `shared/directives/reveal.directive.ts` — ya adoptado acá tal cual.
-- `shared/components/terminal/` — terminal con efecto typewriter real
-  (líneas que se escriben progresivamente). El panel de estado del hero
-  de ZIARON es una versión estática; si se quiere el efecto de escritura,
-  ese componente es la referencia directa.
-- `shared/components/section-title/` — eyebrow + heading + acento + sub
-  como componente con `@Input()`, para no repetir ese bloque de markup en
-  cada sección nueva (Ecosistema, Principios, Roadmap). Vale la pena
-  crear el equivalente en ZIARON cuando se reactiven esas secciones.
-- `shared/components/back-to-top/` y `scroll-progress/` — solo aplican
-  cuando la página vuelva a tener scroll (ver nota de "Home sin scroll"
-  más abajo).
+| Constante | Uso |
+|---|---|
+| `CAPABILITIES` | Home `#que-hacemos` (4 líneas de trabajo) |
+| `PRODUCTS` | Ecosistema completo (6) → panel Nexus + conteos del hero + texto "+4 plataformas" |
+| `FEATURED_PRODUCTS` | Productos con página propia → home `#productos` y `/productos/facturacion` |
+| `RESTAURANT_OS_MODULES` | `/productos/restaurant-os` (4 capas de módulos de 04-restaurant-os) |
+| `PRINCIPLES` | Home `#como-trabajamos` (títulos de 06-engineering; `desc` aprobadas por el usuario) |
+| `MISSION`, `VISION`, `COMPANY_VALUES` | `/nosotros`. Fuente oficial: `ziaron-foundation/01-company/README.md` — cambiar en ambos lados |
+| `PHASES` | Home `#roadmap` |
+| `RESTAURANT_OS_PAINS`, `_STEPS`, `_FAQ` | `/productos/restaurant-os` (problema, cómo funciona, FAQ) |
+| `BILLING_STEPS`, `BILLING_FAQ` | `/productos/facturacion` |
+| `NAV_LINKS`, `PRIMARY_CTA` | Header y menú móvil |
+| `FOOTER_COLUMNS` | Footer. `soon: true` = página que aún no existe → texto "Próximamente", sin link |
 
-Es una SPA de una sola pantalla, **no usa Angular Router** — `pages/home`
-no es una "ruta", es solo la capa que agrupa el contenido de `<main>`
-separada del layout (`header`/`footer`), para que crecer el home no
-signifique tocar el shell (`app.html`). Si en algún momento se necesitan
-rutas reales (ej. una página de privacidad aparte), ahí sí se agrega
-`provideRouter` en `app.config.ts` y `app.routes.ts` (ya existen, vacíos,
-del scaffold inicial de `ng new`).
+## Navegación híbrida
 
-Al agregar una sección nueva (ej. reactivar Ecosistema): crear
-`components/ecosystem/`, importar `PRODUCTS` desde `data/content.data.ts`,
-y agregar `<app-ecosystem />` dentro de `pages/home/home.component.html`
-(no en `app.html`).
+- Links con `fragment` (`/#productos`, `/#roadmap`) → anclas del home. El
+  router hace el scroll (`withInMemoryScrolling({ anchorScrolling })`); el
+  offset del header sticky (88px) se fija en `App` con
+  `ViewportScroller.setOffset`. `onSameUrlNavigation: 'reload'` permite
+  volver a hacer clic en el mismo ancla.
+- Links sin fragment → rutas reales con `routerLink`.
+- Estado activo (`HeaderComponent`): ruta actual para páginas; **scroll spy**
+  para las anclas del home (`HOME_SECTION_IDS` — mantener sincronizado con
+  los `id` de las secciones). "Productos" queda activo también en
+  `/productos/*`.
+- Ya NO se reescribe la URL con `history.pushState/replaceState` al hacer
+  scroll (lo hacía la v1 sin router): ahora las URLs limpias (`/nosotros`)
+  son páginas reales y pelearía con el router.
+- Nav: el menú crece 1:1 con destinos reales — nada de links decorativos.
+- Menú móvil (< `lg`): panel a pantalla completa bajo el header; se cierra al
+  navegar o con Escape y bloquea el scroll del body mientras está abierto.
 
-### Por qué un service para el tema
+## Prerender (SSG) — reglas para que no se rompa el build
 
-El tema (`ThemeService`) vive en `core/services` porque es estado
-compartido: lo lee `HeaderComponent` (vía `ThemeToggleComponent`) pero en
-el futuro cualquier componente podría necesitarlo. Los componentes de
-presentación (`header`, `hero`, `footer`, `home`) no tienen lógica de
-negocio propia — solo maquetación y, cuando aplica, inyectan servicios.
+Durante el build cada ruta se ejecuta en Node, donde NO existen `window`,
+`document` real, `localStorage`, `matchMedia` ni `IntersectionObserver`.
 
-### `display: contents` en los componentes del shell
+- Acceso al navegador siempre detrás de `isPlatformBrowser(inject(PLATFORM_ID))`
+  o dentro de `afterNextRender(...)`. Ver `ThemeService`, `RevealDirective`,
+  `LoaderComponent`, `ScrollProgressComponent`, `BackToTopComponent`, header.
+- `@HostListener('window:scroll')` está bien, pero el handler debe salir
+  temprano si no es navegador.
+- `RevealDirective` pone la clase `reveal` también en el HTML prerenderizado
+  (sin parpadeo al hidratar; el loader cubre esos ms). Sin JS, un
+  `<noscript>` en `index.html` fuerza todo visible y oculta el loader.
+- El `<script>` inline de `index.html` aplica el tema antes de Angular (FOUC).
+  Si cambia la lógica de `ThemeService`, reflejarla ahí también.
+- Hidratación activa (`provideClientHydration(withEventReplay())`).
 
-`header`, `home`, `hero` y `footer` usan `:host { display: contents; }`
-en su SCSS. Esto es necesario porque `app.scss` pone al `:host` de `App`
-como flex-column de `100dvh`, y sus hijos directos deben ser los
-elementos `<header>`/`<main>`/`<footer>` reales (con `flex-shrink-0` /
-`flex-1`) para que el cálculo de alturas funcione — no los tags custom
-que Angular inserta (`<app-header>`, `<app-home>`, etc.). Si se crea un
-componente nuevo que sea hijo directo del shell o de `home`, aplicar el
-mismo patrón.
+## Sistema de diseño (resumen — detalle en DESIGN.md)
+
+- **Tokens semánticos** en `src/tailwind.css` (`:root` claro / `.dark`
+  oscuro, expuestos con `@theme inline`). **Nunca hardcodear un hex de UI**;
+  usar `bg-bg`, `bg-bg-elevated`, `text-text`, `text-text-muted`,
+  `text-text-dim`, `border-border`, `border-line`, `*-accent`,
+  `text-accent-text`, `bg-accent-bg`, `border-accent-border`. Los hex de
+  marca (`#8B5CF6`, `#6366F1`, `#4F7FFF`, `#06B6D4`, `#22D3EE`) solo en
+  isotipo, degradados y glows.
+- Tipografías: Space Grotesk (`font-display`), Inter (`font-body`),
+  JetBrains Mono (`font-mono`).
+- **Clases de UI compartidas** (`tailwind.css`, `@layer components`):
+  `.btn` + `.btn-primary` / `.btn-ghost` (+ `.btn-sm`), `.link-arrow` (con
+  `.link-arrow__icon`), `.page-gutter` (padding lateral estándar 22/44/72px,
+  el mismo que header y footer). Una sola acción `btn-primary` por bloque.
+- **Layout full-bleed** (sin `max-w` centrando la página, decisión del
+  usuario). Cada bloque usa `page-gutter`; los textos largos sí llevan su
+  propio `max-w-[..ch]` por legibilidad.
+- **Ritmo vertical de secciones del home:** `py-16 sm:py-20 lg:py-24` con
+  `border-t border-line` entre secciones. Encabezado siempre con
+  `<app-section-title eyebrow title subtitle meta>`.
+- **Páginas internas:** empiezan con `<app-page-header eyebrow title lead status>`.
+- **Estados de producto:** `<app-status-pill label tone>` (`accent` = activo,
+  `muted` = próximamente).
+- Tema claro/oscuro/auto: `ThemeService` + `ThemeToggleComponent`.
+
+### Regla de marca: isotipo O wordmark, nunca juntos
+
+El isotipo (la Z con nodos) y el wordmark (ZIARON) no van lado a lado: se
+lee "Z ZIARON". Usar uno u otro según el espacio: wordmark en header,
+footer e imagen OG; isotipo solo en favicon, apple-touch-icon, loader,
+panel Nexus y como logo cuadrado (JSON-LD). Pedido explícito del usuario.
+
+### Trampas conocidas
+
+- **No poner clases responsive (`hidden sm:block`, etc.) en el tag de un
+  componente** que define `:host { display: ... }`: los estilos de
+  componente no están en una capa CSS y le ganan a las utilidades de
+  Tailwind (que sí están en `@layer utilities`). Envolver en un `<span>`/
+  `<div>` y poner las clases ahí (ver header).
+- No usar `[class.sm:algo]` / clases con `:` o `[]` en bindings `[class.x]`;
+  usar `[class]="cond ? '...' : '...'"`.
+- `display: contents` en el `:host` de secciones/páginas que deben ser hijos
+  directos del layout flex (hero, footer, header, secciones del home).
+- `app.scss` usa `overflow-x: clip` (no `hidden`) para que el header
+  `sticky` funcione — ver comentario ahí.
+- Geometría del isotipo (loader 1:1, panel Nexus 0.674×): ver DESIGN.md §7.
 
 ## Convención de nombres (Angular CLI)
 
-Este proyecto restaura el sufijo clásico (`.component.ts`, `.service.ts`, etc.)
-que Angular 20+ quitó por defecto. Configurado en `angular.json` →
-`projects.ziaron-website.schematics`. Al correr `ng generate`, los archivos
-saldrán con sufijo automáticamente — no hay que hacer nada extra.
+Sufijos clásicos (`.component.ts`, `.service.ts`...) restaurados en
+`angular.json` → `schematics`. `ng generate` ya los aplica.
 
-## Sistema de diseño
+## Formularios (`shared/components/lead-form`)
 
-### Tokens semánticos (única fuente de verdad: `src/tailwind.css`)
+Un componente, 3 variantes (`variant`): `waitlist` (Restaurant OS
+`#lista-espera`), `billing` (`/productos/facturacion#interes`) y `contact`
+(`/contacto`). Reactive Forms, validación de celular peruano (9 dígitos que
+empiezan en 9, con o sin +51), consentimiento obligatorio con link a
+Privacidad (Ley 29733), campo trampa antispam `_gotcha`. Envía POST JSON a
+`SITE.formEndpoint` con `origen` y `_subject` para filtrar en el correo.
+Éxito/error → toast + estado de éxito en el propio formulario.
 
-Los colores **no son fijos** — son tokens semánticos que cambian de valor
-según el tema (claro/oscuro), definidos como variables CSS en `:root` (claro)
-y `.dark` (oscuro), y expuestos a Tailwind vía `@theme inline`. Esto es lo
-que permite el selector de tema sin duplicar clases.
+## Activar canales (`data/site.config.ts`)
 
-**Nunca hardcodear un color hex en HTML/SCSS.** Usar siempre estas utilidades:
+Regla: **nunca publicar un canal que no responde.** Todo campo vacío oculta
+su UI o muestra "en preparación". Para activar:
+1. **Formularios:** ✅ activo — `https://formspree.io/f/xljjwzew` (cuenta
+   Formspree del usuario, plan gratis, un solo formulario para las 3
+   variantes; se distinguen por `origen` y `_subject`). Plan gratis ≈ 50
+   envíos/mes: revisar el límite si crece el tráfico.
+2. **WhatsApp:** número sin "+" ni espacios en `whatsapp` (`'51987654321'`).
+   Aparece el botón flotante (el de "volver arriba" se apila encima) y el
+   canal en /contacto.
+3. **Correo:** `email` (idealmente `contacto@ziaron.com`). Aparece en
+   /contacto y en la Política de privacidad (derechos ARCO).
 
-| Utilidad Tailwind | Uso |
-|---|---|
-| `bg-bg` / `text-bg` | Fondo de página |
-| `bg-bg-elevated` | Fondo de tarjetas/paneles elevados |
-| `border-border` | Bordes, divisores |
-| `text-text` | Texto principal |
-| `text-text-muted` | Texto secundario (~60% opacidad equivalente) |
-| `text-text-faint` | Texto terciario (~35-40% opacidad equivalente) |
-| `bg-accent` / `text-accent` / `border-accent` | Acento de marca (cian en oscuro, teal en claro) |
-| `border-accent-dim` | Acento atenuado (bordes de estado "activo") |
+## Lanzamiento (pendiente del usuario)
 
-Valores actuales: ver `src/tailwind.css` (`:root` y `.dark`). Colores base
-tomados del branding definido en `02-branding/README.md` del repo
-`ziaron-foundation` (azul profundo, cian tecnológico, gris grafito, blanco);
-el modo claro usa un teal más oscuro como acento por contraste (AA) sobre
-fondo claro — el cian brillante original solo funciona bien sobre fondo oscuro.
+- Push de `feature/landing-v2` → PR a `develop`/`master`.
+- Vercel: proyecto apuntando a este repo, framework Angular, output
+  `dist/ziaron-website/browser`; dominio `ziaron.com`; activar Analytics.
+  Verificar que `/nosotros` sirve el HTML prerenderizado y que una URL
+  inexistente cae en el 404 (`index.csr.html`).
+- Formspree: tras publicar, activar **Restrict to Domain** = `ziaron.com`
+  (Settings del **proyecto**, no del formulario; disponible en plan gratis).
+  No activarlo antes: podría bloquear las pruebas desde `localhost`.
+- Google Search Console: verificar dominio y enviar `sitemap.xml`.
+- Lighthouse sobre el sitio publicado (en local: SEO 100, accesibilidad
+  96–100, performance desktop 98–99; performance móvil local ~72 no es
+  representativo — sin compresión y con Google Fonts bloqueado).
+- **Legal:** Privacidad y Términos son texto base sin asesoría legal.
+  Revisar con un abogado, completar razón social y RUC al constituir, y
+  evaluar la inscripción del banco de datos ante la Autoridad Nacional de
+  Protección de Datos Personales. Libro de reclamaciones cuando haya venta.
+- Contraste: `--text-dim` en textos mono de ~10px no llega a AA 4.5:1 sobre
+  tarjetas (aviso de Lighthouse). Decisión de diseño abierta: oscurecer el
+  token o usar `text-text-muted` en esos labels.
 
-| Rol | Fuente | Utilidad |
-|---|---|---|
-| Display (títulos, marca) | Space Grotesk | `font-display` |
-| Cuerpo | Inter | `font-body` (aplicada por defecto en `<body>`, ver `index.html`) |
-| Mono (eyebrows, labels, datos, panel de estado) | JetBrains Mono | `font-mono` |
+## Contenido placeholder / honesto (no inventar)
 
-Para agregar un color o tipografía nueva: edítalo en `src/tailwind.css`
-(dentro de `:root`/`.dark` si es un tema, o en `@theme inline` si es fijo
-para ambos temas), no en ningún otro lado.
+- `/contacto`: aviso honesto de que el canal oficial está en preparación. No
+  se publica un correo/WhatsApp/formulario que todavía no responde.
+- Footer: "Empresa en constitución" (aprobado por el usuario; cambiar a razón social + RUC al constituirse); sin correo ni redes hasta que existan.
+- Formularios: visibles pero con envío deshabilitado ("Disponible pronto")
+  hasta configurar `formEndpoint`.
+- Vista conceptual de Restaurant OS (`concept-board`): ilustración en
+  HTML/CSS con datos ficticios y etiqueta "VISTA CONCEPTUAL". Reemplazar por
+  capturas reales cuando exista el MVP.
+- FAQ de Restaurant OS: respuestas sobre equipos/precios redactadas como
+  intención ("la idea es", "será"), no como promesa — revisar al lanzar.
 
-### Modo oscuro / claro / automático
+## Historial
 
-- Implementado con la estrategia de clase de Tailwind v4:
-  `@custom-variant dark (&:where(.dark, .dark *));` en `tailwind.css`.
-  Esto hace que `dark:` **no** dependa directamente de `prefers-color-scheme`
-  — depende de si `<html>` tiene la clase `.dark`, que la app controla.
-- Lógica centralizada en `ThemeService` (`core/services/theme.service.ts`):
-  signal `theme` (`'light' | 'dark' | 'auto'`), persistida en `localStorage`
-  bajo la key `ziaron-theme`. En modo `auto` escucha
-  `matchMedia('(prefers-color-scheme: dark)')` y sigue al sistema.
-- `index.html` tiene un `<script>` inline en el `<head>` que aplica el tema
-  guardado **antes** de que Angular arranque, para evitar parpadeo (FOUC).
-  Si cambia la lógica del service, hay que reflejarla ahí también (están
-  duplicadas a propósito: una corre antes de que Angular exista).
-- Selector de tema: `ThemeToggleComponent`, 3 botones (claro/auto/oscuro)
-  en el nav, con iconos SVG inline y `aria-pressed`. Inyecta `ThemeService`
-  directamente (no recibe `@Input`).
-
-### Patrón de layout: full-bleed, sin ancho máximo
-
-Cada `<section>` ocupa `w-full` (fondo, bordes y contenido van de borde a
-borde de la pantalla — a pedido explícito del usuario, **no** hay un
-`max-w` centrando el contenido). El padding lateral crece con el viewport:
-`px-6 md:px-12 lg:px-20`. Al agregar una sección nueva, copia ese patrón:
-
-```html
-<section class="w-full border-t border-border py-20 md:py-24">
-  <div class="w-full px-6 md:px-12 lg:px-20">
-    <!-- contenido -->
-  </div>
-</section>
-```
-
-Los bloques de texto largo (citas, párrafos) sí pueden llevar su propio
-`max-w-[...]` interno por legibilidad — eso es tipografía, no layout de
-página, y está bien mantenerlo.
-
-### Home sin scroll (pantalla única)
-
-Mientras solo exista la sección de inicio, la página completa (`header` +
-`main` + `footer`) cabe exacto en un viewport, sin scrollbar — a pedido
-explícito del usuario. Se logra con `:host` de `App` como flex-column de
-`100dvh` en `app.scss`, `header`/`footer` con `flex-shrink-0`, y `main`
-con `flex-1`. El `<body>` en `index.html` usa `h-screen overflow-hidden`
-(no `min-h-screen`) por la misma razón.
-
-**Importante:** en cuanto se reactiven Ecosistema/Principios/Roadmap (ver
-sección de estado arriba), esto va a dejar de tener sentido — la página
-volverá a tener scroll normal entre secciones. En ese momento, quitar
-`overflow-hidden` del `<body>` y `h-screen` → `min-h-screen` de nuevo, y el
-`main` puede volver a fluir sin `flex-1`.
-
-### Nav con scroll a secciones
-
-El nav hoy **no tiene links** (se probó con uno de ejemplo, "Inicio", y se
-quitó — solo era para verificar el comportamiento de scroll). El patrón a
-usar cuando haya más de una sección: `href="#<id>"` +
-`(click)="scrollTo($event, '<id>')"`, evitando que el navegador empuje el
-`#hash` a la URL. `id="inicio"` ya está puesto en la `<section>` de
-`HeroComponent`, listo para cuando se reactive el nav.
-
-### Qué vive en Tailwind vs. qué vive en SCSS de cada componente
-
-- **Tailwind (`*.component.html`)**: todo el layout, espaciado, color,
-  tipografía, responsive, hover/focus states, tema. Es la norma por defecto.
-- **SCSS de cada componente**: solo lo que Tailwind no resuelve de forma
-  nativa. Hoy: `display: contents` en header/hero/footer (ver arriba), y la
-  textura `.blueprint-grid` en `hero.component.scss`. Si algo se puede
-  hacer con utilidades de Tailwind, va en el HTML, no en SCSS.
-- **La animación `reveal`** (aparición al hacer scroll/cargar) es la
-  excepción: vive en `styles.scss` global + `shared/directives/
-  reveal.directive.ts`, porque es un patrón compartido entre componentes,
-  no algo propio del hero (patrón tomado de `iamwgp-portfolio`).
-
-### Componentes visuales reutilizables (patrones, no todos son componentes Angular aún)
-
-- **Status pill** (punto con "ping" + texto mono uppercase): usado en el nav
-  ("En construcción"). Si se repite una tercera vez, vale la pena extraerlo
-  a un `<app-status-dot>` standalone.
-- **Panel de estado tipo terminal**: el bloque del hero (ventana con 3
-  puntos arriba + líneas `$ comando` en mono) que reemplazó al elemento
-  animado original. Muestra el estado **real** de la Fase 1, no el de
-  `data/content.data.ts` (ese array todavía dice "Branding" completo y
-  Restaurant OS "en construcción", que ya no es preciso — hay que
-  actualizarlo cuando se reactive el roadmap). Estado real actual:
-  Fundación de ZIARON lista, Branding en definición, Restaurant OS sin
-  empezar (no se muestra la línea hasta que arranque). Si se necesita en
-  otra sección, es un buen candidato a componente propio.
-- Ya no hay elemento "hero" animado girando — se retiró a pedido del
-  usuario (no le gustaba la animación constante). El panel de estado es
-  estático salvo por el cursor parpadeante (`_`), que respeta
-  `prefers-reduced-motion`.
-
-### Accesibilidad
-
-- Todo elemento interactivo (botones, links) lleva
-  `focus-visible:ring-2 focus-visible:ring-accent`.
-- `prefers-reduced-motion: reduce` está respetado globalmente en
-  `styles.scss` (anula animaciones/transiciones, incluida `reveal`).
-
-## Pendiente / decisiones abiertas
-
-- [ ] Reactivar secciones de Ecosistema, Principios y Hoja de ruta cuando
-      el usuario lo pida (los datos ya están listos en `data/content.data.ts`,
-      falta crear los componentes).
-- [ ] Agregar información de contacto al footer cuando se defina (a
-      propósito no se puso todavía).
-- [ ] Extraer status pill / panel de estado a componentes propios si se
-      reutilizan en una tercera sección.
-- [ ] Conectar con Vercel apuntando a este proyecto (dominio ziaron.com).
+- **v1** (commit `cfb473c`): SPA de una página sin router; nav con URLs
+  "limpias" simuladas con `history.pushState`; secciones Nosotros, Misión,
+  Valores, Ecosistema, Contacto; panel Nexus; loader.
+- **v2** (`feature/landing-v2`): router + SSG, reorganización de carpetas,
+  header con CTA y menú móvil, footer en columnas, home con hero + panel
+  Nexus, productos, principios, roadmap y CTA; páginas base de productos,
+  nosotros, contacto y 404. Valores → "Cómo trabajamos" en el home;
+  Nosotros/Misión → `/nosotros`; Contacto → `/contacto`.
+- **2026-10-31:** descripciones de principios aprobadas; misión, visión
+  aspiracional y 5 valores de empresa redactados y aprobados (en `/nosotros`
+  y en `ziaron-foundation/01-company`). Valores de empresa ≠ principios de
+  ingeniería: los primeros son cultura (`/nosotros`), los segundos cómo se
+  construye (home `#como-trabajamos`).
+- **Fases 4–6:** páginas completas de Restaurant OS (problema, cómo
+  funciona, vista conceptual, lista de espera, FAQ), Facturación y Contacto;
+  formulario único con 3 variantes, toast, WhatsApp flotante, páginas
+  legales; SEO por ruta, OG image, favicon, JSON-LD, sitemap/robots y
+  Vercel Analytics.
