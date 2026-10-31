@@ -7,6 +7,17 @@ export interface ProductNode {
   desc: string;
 }
 
+/** Ícono de las 4 tarjetas de "Qué hacemos" — cada uno es un SVG line
+ * dibujado a medida en `CapabilitiesComponent` (ver handoff de diseño),
+ * no un asset de marca. */
+export type CapabilityIcon = 'saas' | 'ai' | 'automation' | 'cloud';
+
+export interface Capability {
+  icon: CapabilityIcon;
+  title: string;
+  desc: string;
+}
+
 export interface Principle {
   n: string;
   title: string;

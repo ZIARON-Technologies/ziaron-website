@@ -4,31 +4,21 @@
   display: contents;
 }
 
-/* Textura de fondo tipo plano técnico: grid de puntos muy tenue,
-   atenuado hacia los bordes. Refuerza la identidad de ingeniería sin
-   agregar color ni animación nueva. Puntos más espaciados y suaves que
-   la primera versión — la densidad anterior se veía "chispeada". */
-.blueprint-grid {
-  background-image: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--text) 15%, transparent) 1px, transparent 0);
-  background-size: 40px 40px;
-  mask-image: radial-gradient(ellipse 60% 50% at 50% 38%, black 0%, transparent 70%);
-  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 38%, black 0%, transparent 70%);
-  opacity: 0.4;
+/* La segunda línea del H1 lleva un degradado de marca recortado al texto —
+   valores exactos del handoff (README, sección H1). No se puede expresar
+   con utilidades de Tailwind porque el degradado cambia de stops entre
+   tema claro/oscuro, así que va acá. */
+.hero-gradient-text {
+  background: linear-gradient(96deg, #7c3aed, #3b63d9 48%, #0e7490);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-/* Panel de estado tipo terminal: borde superior de acento + sombra propia
-   para que destaque sobre el fondo plano (antes se veía apagado). */
-.terminal-panel {
-  position: relative;
-  box-shadow: 0 24px 48px -12px color-mix(in srgb, var(--text) 22%, transparent);
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  }
+:host-context(.dark) .hero-gradient-text {
+  background: linear-gradient(96deg, #8b5cf6, #4f7fff 45%, #22d3ee);
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
 /* La secuencia de entrada (reveal) vive en styles.scss + shared/directives/

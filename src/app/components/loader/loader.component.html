@@ -38,6 +38,26 @@
         stroke-linejoin="round"
       />
 
+      <!-- Guías punteadas decorativas: la MISMA textura del panel Nexus
+           estático (system-status.component.html), escaladas al cuadrado de
+           nodos de este SVG (166.1843 vs 112 del panel → factor ×1.4837).
+           Estáticas todo el ciclo, no animan — dan contexto de "red" detrás
+           de la Z, igual en loader y panel. -->
+      <path
+        d="M46.9077 46.9077 L130 130 L213.092 213.092 M213.092 46.9077 L130 130 L46.9077 213.092"
+        stroke="#4F7FFF"
+        stroke-width="1.5"
+        stroke-dasharray="4.5 8.9"
+        opacity="0.35"
+      />
+      <path
+        d="M-18.4 130 H46.9077 M213.092 130 H278.39 M130 14.26 V46.9077 M130 213.092 V245.74"
+        stroke="#4F7FFF"
+        stroke-width="1.5"
+        stroke-dasharray="3 10.4"
+        opacity="0.28"
+      />
+
       <!-- Los nodos ya no están fijos: cada uno aparece justo cuando el
            trazo de arriba/abajo lo alcanza. Nodo 1 (LT) y nodo 4 (RB) son
            el final de cada mitad ("--end"); nodo 2 (RT) y nodo 3 (LB) son

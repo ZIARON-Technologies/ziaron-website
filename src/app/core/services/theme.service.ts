@@ -19,7 +19,17 @@ const THEME_STORAGE_KEY = 'ziaron-theme';
 export class ThemeService {
   readonly theme = signal<ThemeMode>(this.readStoredTheme());
 
+  /** IMPORTANTE: debe declararse antes de `isDark` — los field initializers
+   * de una clase corren en orden de declaración, y `computeIsDark()` lee
+   * `this.media`. Si `isDark` se declara primero, `media` todavía es
+   * `undefined` en ese momento (bug real, reventaba en runtime). */
   private readonly media = window.matchMedia('(prefers-color-scheme: dark)');
+
+  /** Tema resuelto (true = oscuro), derivado de `theme` + `prefers-color-scheme`
+   * cuando está en 'auto'. Lo usan los componentes que necesitan elegir un
+   * asset distinto por tema (ej. el SVG del wordmark, que no puede resolverse
+   * solo con CSS). */
+  readonly isDark = signal<boolean>(this.computeIsDark());
 
   constructor() {
     this.media.addEventListener('change', () => {
@@ -43,8 +53,13 @@ export class ThemeService {
   }
 
   private applyTheme(): void {
-    const mode = this.theme();
-    const isDark = mode === 'dark' || (mode === 'auto' && this.media.matches);
+    const isDark = this.computeIsDark();
     document.documentElement.classList.toggle('dark', isDark);
+    this.isDark.set(isDark);
+  }
+
+  private computeIsDark(): boolean {
+    const mode = this.theme();
+    return mode === 'dark' || (mode === 'auto' && this.media.matches);
   }
 }

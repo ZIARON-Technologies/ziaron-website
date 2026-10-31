@@ -3,21 +3,51 @@
 Landing page institucional de ZIARON Technologies. Es **solo informativa**
 (misión, visión, valores, ecosistema de productos): no hay panel
 administrativo ni autenticación en este repo. Es una **SPA de una sola
-página** con scroll a secciones ancladas (patrón `scrollIntoView`, ver
-`HeaderComponent.scrollTo()`) — no usa Angular Router.
+página** con scroll a secciones ancladas (links `href="#id"` + scroll
+nativo del navegador, ver "Nav con scroll a secciones" más abajo) — no usa
+Angular Router.
 
 Contenido basado en `ZIARON_Foundation_v0.3.md` (documento fundacional del
 repo `ziaron-foundation`). Si el contenido de negocio cambia, ese es el
 documento fuente a revisar primero.
 
-**Estado actual de la página (deliberado, no es un olvido):** solo se
-muestran el hero, el nav y el footer. Las secciones de Ecosistema,
-Principios y Hoja de ruta están ocultas a pedido del usuario mientras el
-sitio sigue en construcción — el contenido ya está listo en
-`src/app/data/content.data.ts`, solo falta crear los componentes
-(`EcosystemComponent`, `PrinciplesComponent`, `RoadmapComponent`) y
-agregarlos a `app.html` cuando se quiera reactivarlas. El footer tampoco
-muestra correo de contacto todavía, a propósito.
+**Estado actual de la página:** implementado el handoff de diseño de
+Claude Design (mockup hi-fi aprobado, 6 pantallas: desktop/tablet/mobile ×
+claro/oscuro), más dos rondas de ajustes propios (ver más abajo). Hoy se
+muestran: header (wordmark + nav con "NOSOTROS"/"ECOSISTEMA" + pill "En
+construcción" + selector de tema — nav oculto en mobile por espacio, ver
+`HeaderComponent`), hero (frase de marca + meta row con conteos reales del
+ecosistema), sección "Quiénes somos" (`AboutComponent`, id de ancla
+`nosotros`, contenido real de Visión/Filosofía de `01-company/README.md`),
+bloque "Qué hacemos" (`CapabilitiesComponent`, id de ancla `ecosistema`, 4
+tarjetas con las líneas de trabajo), panel "Nexus" (`SystemStatusComponent`,
+isotipo SVG + terminal con el estado real de `PRODUCTS`) y footer
+(copyright + "Perú · ziaron.com", sin correo/redes todavía a propósito).
+Las secciones de Principios y Hoja de ruta siguen ocultas — el contenido
+ya está listo en `src/app/data/content.data.ts` (`PRINCIPLES`, `PHASES`),
+solo falta crear los componentes (`PrinciplesComponent`,
+`RoadmapComponent`) y agregarlos a `home.component.html` cuando se quiera
+reactivarlas.
+
+**Sobre el nav con más de un link:** el brief original decía "un solo
+link, no agregar menú" porque solo había una sección real. Se agregó
+"NOSOTROS" cuando se creó una segunda sección real (`AboutComponent`) — la
+regla de fondo sigue siendo la misma: el nav crece 1:1 con secciones reales
+que existan, nunca con links decorativos sin destino (se evaluó
+explícitamente y se descartó agregar "Misión"/"Visión" como links sueltos
+sin contenido detrás).
+
+**Geometría del panel Nexus y del loader:** ambos deben ser réplicas a
+escala exacta del isotipo maestro (`branding-assets/02-isotype/svg/
+ziaron-isotype.svg`, cuadrado de nodos de 166.1843px, stroke 21.8414) —
+el loader es 1:1 con el maestro; el panel Nexus usa un cuadrado de 112px
+(factor de escala 112 ÷ 166.1843 ≈ 0.674 aplicado a stroke, nodos y
+núcleo). Si se toca una de las dos geometrías, recalcular la otra con este
+mismo factor para que no se desalineen (pasó una vez: se aumentó el grosor
+de la Z sin reescalar los nodos, y quedaron casi tapados por el trazo).
+Ambos incluyen las mismas guías punteadas decorativas (diagonales +
+"ticks" cardinales alrededor del núcleo) — estáticas en los dos, la única
+diferencia real es que el loader anima el dibujado y el panel no.
 
 ## Stack
 
@@ -36,21 +66,31 @@ app/
 │       └── theme.service.ts   Estado del tema (signal), localStorage, matchMedia
 ├── models/                    Interfaces y tipos (sin lógica)
 │   ├── theme.model.ts         ThemeMode
-│   └── content.model.ts       ProductNode, Principle, Phase
+│   └── content.model.ts       ProductNode, Capability, Principle, Phase
 ├── data/
-│   └── content.data.ts        Datos reales (PRODUCTS, PRINCIPLES, PHASES) — sincronizados
-│                               con ziaron-foundation, aún no renderizados (ver estado arriba)
+│   └── content.data.ts        Datos reales (CAPABILITIES, PRODUCTS ya renderizados;
+│                               PRINCIPLES, PHASES aún no — ver estado arriba)
 ├── pages/
-│   └── home/                  Página "Home": compone el contenido de <main> (hoy solo <app-hero />)
+│   └── home/                  Página "Home": compone <app-hero /> + <app-capabilities /> + <app-system-status />
 ├── shared/
 │   └── directives/
 │       └── reveal.directive.ts  `appReveal` — IntersectionObserver, agrega .visible al entrar al viewport
 └── components/
-    ├── header/                Nav + status pill + theme-toggle
-    ├── hero/                  Sección "Inicio" — hoy único contenido de Home
+    ├── header/                Wordmark + nav ("NOSOTROS"/"ECOSISTEMA") + status pill + theme-toggle
+    ├── hero/                  Sección "Inicio": eyebrow + H1 con degradado + meta row
+    ├── about/                 Sección "Quiénes somos" (id `nosotros`) — contenido real, sin repetir el hero
+    ├── capabilities/          Bloque "Qué hacemos" (id `ecosistema`) — 4 tarjetas, usa CAPABILITIES
+    ├── system-status/         Panel "Nexus" — isotipo SVG inline + terminal con estado real (PRODUCTS)
+    ├── loader/                Overlay de carga inicial con el isotipo animándose (ver app.html)
     ├── footer/
     └── theme-toggle/          Grupo de 3 botones (claro/auto/oscuro), inyecta ThemeService
 ```
+
+Origen del diseño actual: `design_handoff_ziaron_landing/` (bundle exportado de
+Claude Design, no vive en este repo — son referencias HTML/README, no código
+para copiar tal cual). Si el diseño visual cambia de nuevo, ese README es el
+lugar donde están los valores exactos (colores, tipografías, espaciados,
+geometría del isotipo) que se usaron para escribir los componentes de arriba.
 
 ### Inspiración: `iamwgp-portfolio`
 
@@ -127,18 +167,25 @@ que permite el selector de tema sin duplicar clases.
 |---|---|
 | `bg-bg` / `text-bg` | Fondo de página |
 | `bg-bg-elevated` | Fondo de tarjetas/paneles elevados |
-| `border-border` | Bordes, divisores |
+| `border-border` | Bordes de tarjetas/paneles (~10-11% opacidad) |
+| `border-line` | Divisores finos (header, footer, entre secciones — ~9% opacidad, más sutil que `border`) |
 | `text-text` | Texto principal |
 | `text-text-muted` | Texto secundario (~60% opacidad equivalente) |
-| `text-text-faint` | Texto terciario (~35-40% opacidad equivalente) |
+| `text-text-dim` | Texto terciario (~38-42% opacidad equivalente) — reemplaza al viejo `text-faint` |
 | `bg-accent` / `text-accent` / `border-accent` | Acento de marca (cian en oscuro, teal en claro) |
-| `border-accent-dim` | Acento atenuado (bordes de estado "activo") |
+| `text-accent-text` | Variante de acento para texto sobre fondos claros de pill/link (más contraste que `accent` puro en oscuro) |
+| `bg-accent-bg` / `border-accent-border` | Fondo/borde tenue de acento (pills, chips) |
+| `bg-ctl-bg` / `border-ctl-border` | Fondo/borde de controles tipo grupo de botones (selector de tema) |
+| `bg-pill-on` | Fondo del botón activo dentro de un grupo de controles |
+| `--dot-grid` (variable CSS, no utilidad) | Color de la retícula de puntos de fondo (`app.scss`) |
 
-Valores actuales: ver `src/tailwind.css` (`:root` y `.dark`). Colores base
-tomados del branding definido en `02-branding/README.md` del repo
-`ziaron-foundation` (azul profundo, cian tecnológico, gris grafito, blanco);
-el modo claro usa un teal más oscuro como acento por contraste (AA) sobre
-fondo claro — el cian brillante original solo funciona bien sobre fondo oscuro.
+Valores actuales: ver `src/tailwind.css` (`:root` y `.dark`) — sincronizados con
+`design_handoff_ziaron_landing/README.md` (handoff de Claude Design, alta
+fidelidad). Colores base tomados del branding definido en
+`02-branding/README.md` del repo `ziaron-foundation` (azul profundo, cian
+tecnológico, gris grafito, blanco); el modo claro usa un teal más oscuro como
+acento por contraste (AA) sobre fondo claro — el cian brillante original solo
+funciona bien sobre fondo oscuro.
 
 | Rol | Fuente | Utilidad |
 |---|---|---|
@@ -187,38 +234,47 @@ Los bloques de texto largo (citas, párrafos) sí pueden llevar su propio
 `max-w-[...]` interno por legibilidad — eso es tipografía, no layout de
 página, y está bien mantenerlo.
 
-### Home sin scroll (pantalla única)
+### Scroll vertical normal (ya no es pantalla única)
 
-Mientras solo exista la sección de inicio, la página completa (`header` +
-`main` + `footer`) cabe exacto en un viewport, sin scrollbar — a pedido
-explícito del usuario. Se logra con `:host` de `App` como flex-column de
-`100dvh` en `app.scss`, `header`/`footer` con `flex-shrink-0`, y `main`
-con `flex-1`. El `<body>` en `index.html` usa `h-screen overflow-hidden`
-(no `min-h-screen`) por la misma razón.
+Con el hero + "Qué hacemos" + panel Nexus activos, el contenido no siempre
+cabe en un viewport, así que la página vuelve a hacer scroll vertical
+normal en todos los tamaños (ver `design_handoff_ziaron_landing/README.md`,
+"la página hace scroll vertical en todos los tamaños"). `:host` de `App`
+usa `min-height: 100dvh` (no `height` fijo) en `app.scss`, y `<body>` en
+`index.html` usa `min-h-screen` (sin `overflow-hidden`). Si se agregan más
+secciones no hay que tocar esto de nuevo — ya está pensado para crecer.
 
-**Importante:** en cuanto se reactiven Ecosistema/Principios/Roadmap (ver
-sección de estado arriba), esto va a dejar de tener sentido — la página
-volverá a tener scroll normal entre secciones. En ese momento, quitar
-`overflow-hidden` del `<body>` y `h-screen` → `min-h-screen` de nuevo, y el
-`main` puede volver a fluir sin `flex-1`.
+### Fondo decorativo de la página (retícula + glow)
+
+Viven en `app.scss` (`.page-dot-grid` y `.page-glow`), no en un componente,
+porque cubren header + main + footer completos, no solo el hero (ver el
+mismo README). Se renderizan como dos `<div>` absolutos en `app.html`,
+detrás del contenido (`z-0`; header/main/footer llevan `relative z-10`).
 
 ### Nav con scroll a secciones
 
-El nav hoy **no tiene links** (se probó con uno de ejemplo, "Inicio", y se
-quitó — solo era para verificar el comportamiento de scroll). El patrón a
-usar cuando haya más de una sección: `href="#<id>"` +
-`(click)="scrollTo($event, '<id>')"`, evitando que el navegador empuje el
-`#hash` a la URL. `id="inicio"` ya está puesto en la `<section>` de
-`HeroComponent`, listo para cuando se reactive el nav.
+El nav tiene dos links reales, "NOSOTROS" (`#nosotros` → `AboutComponent`)
+y "ECOSISTEMA" (`#ecosistema` → `CapabilitiesComponent`) — scroll nativo
+del navegador (ancla `#id` + `scroll-behavior: smooth` global en
+`styles.scss`), no hace falta lógica de `scrollTo()` en TypeScript. En
+mobile el `<nav>` del header se oculta (`hidden sm:flex`) porque no entra
+junto al wordmark y el selector de tema — en ese tamaño se navega con
+scroll normal, las secciones tienen su propio `<h2>` visible. Si se agrega
+otra sección con ancla propia, seguir el mismo patrón: un link por sección
+real, nada de dropdowns/mega-menú ni links decorativos sin destino
+(decisión explícita, ver handoff — el nav crece con el contenido real, no
+al revés).
 
 ### Qué vive en Tailwind vs. qué vive en SCSS de cada componente
 
 - **Tailwind (`*.component.html`)**: todo el layout, espaciado, color,
   tipografía, responsive, hover/focus states, tema. Es la norma por defecto.
 - **SCSS de cada componente**: solo lo que Tailwind no resuelve de forma
-  nativa. Hoy: `display: contents` en header/hero/footer (ver arriba), y la
-  textura `.blueprint-grid` en `hero.component.scss`. Si algo se puede
-  hacer con utilidades de Tailwind, va en el HTML, no en SCSS.
+  nativa. Hoy: `display: contents` en todos los componentes de sección
+  (ver arriba), el degradado de texto del H1 en `hero.component.scss`
+  (cambia de stops completos entre tema claro/oscuro, no solo de color) y
+  la retícula/glow de fondo en `app.scss`. Si algo se puede hacer con
+  utilidades de Tailwind, va en el HTML, no en SCSS.
 - **La animación `reveal`** (aparición al hacer scroll/cargar) es la
   excepción: vive en `styles.scss` global + `shared/directives/
   reveal.directive.ts`, porque es un patrón compartido entre componentes,
@@ -226,22 +282,25 @@ usar cuando haya más de una sección: `href="#<id>"` +
 
 ### Componentes visuales reutilizables (patrones, no todos son componentes Angular aún)
 
-- **Status pill** (punto con "ping" + texto mono uppercase): usado en el nav
-  ("En construcción"). Si se repite una tercera vez, vale la pena extraerlo
-  a un `<app-status-dot>` standalone.
-- **Panel de estado tipo terminal**: el bloque del hero (ventana con 3
-  puntos arriba + líneas `$ comando` en mono) que reemplazó al elemento
-  animado original. Muestra el estado **real** de la Fase 1, no el de
-  `data/content.data.ts` (ese array todavía dice "Branding" completo y
-  Restaurant OS "en construcción", que ya no es preciso — hay que
-  actualizarlo cuando se reactive el roadmap). Estado real actual:
-  Fundación de ZIARON lista, Branding en definición, Restaurant OS sin
-  empezar (no se muestra la línea hasta que arranque). Si se necesita en
-  otra sección, es un buen candidato a componente propio.
+- **Status pill** (punto + texto mono uppercase, borde/fondo de acento
+  tenue): aparece dos veces con el mismo marcado — en el header (desktop/
+  tablet) y repetida arriba del eyebrow del hero (solo mobile, porque el
+  header angosto no tiene espacio, ver `HeaderComponent`/`HeroComponent`).
+  Es la misma información en dos lugares, no un componente compartido
+  todavía — si se necesita una tercera vez, ahí sí vale la pena extraerla
+  a `<app-status-pill>`.
+- **Panel "Nexus"** (`SystemStatusComponent`): reemplazó al viejo panel
+  tipo terminal falso. Es el isotipo real de ZIARON como SVG inline
+  (geometría 1:1 obligatoria, ver README del handoff) + una terminal con
+  el estado real del ecosistema, tomado de `PRODUCTS` en
+  `content.data.ts` (misma fuente que la meta row del hero — si
+  `PRODUCTS` cambia, ambos se actualizan solos). El SVG queda inline (no
+  `<img>`) a propósito: `LoaderComponent` reutiliza esta misma geometría
+  animada al cargar la página.
 - Ya no hay elemento "hero" animado girando — se retiró a pedido del
-  usuario (no le gustaba la animación constante). El panel de estado es
-  estático salvo por el cursor parpadeante (`_`), que respeta
-  `prefers-reduced-motion`.
+  usuario (no le gustaba la animación constante). El panel Nexus es
+  estático; la única animación de marca hoy vive en `LoaderComponent`
+  (overlay de carga inicial) y respeta `prefers-reduced-motion`.
 
 ### Accesibilidad
 
@@ -252,11 +311,22 @@ usar cuando haya más de una sección: `href="#<id>"` +
 
 ## Pendiente / decisiones abiertas
 
-- [ ] Reactivar secciones de Ecosistema, Principios y Hoja de ruta cuando
-      el usuario lo pida (los datos ya están listos en `data/content.data.ts`,
-      falta crear los componentes).
+- [x] Reactivar Ecosistema — implementado como `CapabilitiesComponent`
+      ("Qué hacemos") + `SystemStatusComponent` (panel Nexus).
+- [ ] Reactivar Principios y Hoja de ruta cuando el usuario lo pida (los
+      datos ya están listos en `data/content.data.ts` — `PRINCIPLES`,
+      `PHASES` —, falta crear los componentes).
 - [ ] Agregar información de contacto al footer cuando se defina (a
-      propósito no se puso todavía).
-- [ ] Extraer status pill / panel de estado a componentes propios si se
-      reutilizan en una tercera sección.
+      propósito no se puso todavía — hoy solo muestra "Perú · ziaron.com").
+- [ ] Reservar redes sociales y agregarlas al footer (pendiente también en
+      `01-company/README.md` del repo `ziaron-foundation`).
+- [ ] Libro de reclamaciones virtual (INDECOPI) — evaluar si aplica antes
+      de que el sitio tenga venta/contratación real; si aplica, va como
+      link en el footer + página propia con `provideRouter` (necesita
+      backend o proveedor externo, ver conversación de diseño).
+- [ ] Páginas legales (Términos, Privacidad) — cuando existan, activar
+      `provideRouter` en `app.config.ts`/`app.routes.ts` (ya scaffoldeados,
+      vacíos) en vez de agregarlas como secciones de `home`.
+- [ ] Extraer status pill a un componente propio si se reutiliza en un
+      tercer lugar además de header/hero.
 - [ ] Conectar con Vercel apuntando a este proyecto (dominio ziaron.com).

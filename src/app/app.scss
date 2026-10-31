@@ -1,10 +1,50 @@
-/* Shell de la página: layout de pantalla completa sin scroll (mientras
-   solo exista la sección de inicio, ver CLAUDE.md). Todo lo demás vive
-   en los componentes (header, hero, footer). */
+/* Shell de la página. Antes cabía en una sola pantalla sin scroll (mientras
+   solo existía el hero) — con el bloque "Qué hacemos" y el panel Nexus
+   activados, el contenido ya no cabe siempre en un viewport, así que la
+   página vuelve a hacer scroll vertical normal en todos los tamaños (ver
+   README del handoff, "la página hace scroll vertical en todos los
+   tamaños"). Si en el futuro se agregan más secciones, no hay que tocar
+   esto de nuevo. */
 :host {
+  position: relative;
   display: flex;
   flex-direction: column;
-  height: 100dvh;
+  min-height: 100dvh;
   width: 100%;
-  overflow-x: hidden;
+  /* `clip`, no `hidden`: por spec, `overflow-x: hidden` con `overflow-y`
+     implícito en `visible` fuerza a los navegadores a computar overflow-y
+     como `auto` también — eso convierte a este `:host` (el elemento raíz de
+     toda la página) en un contenedor de scroll propio, y como su altura
+     crece con `min-height` (nunca junta scroll interno real), el header
+     `sticky` queda "pegado" al scrollport de ESTE contenedor en vez de al
+     viewport real — es decir, deja de moverse con el scroll de la página.
+     `clip` recorta el overflow horizontal sin activar esa regla, así el
+     header sticky vuelve a fijarse contra el viewport (bug reportado por el
+     usuario: "la cabecera no se mantiene fija"). */
+  overflow-x: clip;
+}
+
+/* Retícula de puntos: mismo patrón en todos los breakpoints, solo cambia
+   el tamaño de celda (44px desktop/tablet, 36px mobile) — ver README. */
+.page-dot-grid {
+  background-image: radial-gradient(var(--dot-grid) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+@media (min-width: 640px) {
+  .page-dot-grid {
+    background-size: 44px 44px;
+  }
+}
+
+/* Glow decorativo en la esquina superior derecha — colores de marca,
+   distintos por tema (ver tokens --dot-grid/tema en tailwind.css; acá el
+   glow usa los mismos tonos de marca directamente porque no se reutiliza
+   en ningún otro lado). */
+.page-glow {
+  background: radial-gradient(circle, rgba(79, 127, 255, 0.12), rgba(139, 92, 246, 0.06) 45%, transparent 70%);
+}
+
+:host-context(.dark) .page-glow {
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.13), rgba(79, 127, 255, 0.06) 45%, transparent 70%);
 }
