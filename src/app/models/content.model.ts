@@ -21,8 +21,7 @@ export interface Capability {
 export interface Principle {
   n: string;
   title: string;
-  /** Bajada de una línea. PROPUESTA de redacción (06-engineering solo
-   * define los títulos) — validar con el usuario. */
+  /** Bajada de una línea (aprobada por el usuario, 2026-10-31). */
   desc: string;
 }
 
@@ -59,4 +58,10 @@ export interface NavLink {
 export interface FooterColumn {
   title: string;
   links: (NavLink & { soon?: boolean })[];
+}
+
+/** Valor de la empresa (cultura), distinto de los principios de ingeniería. */
+export interface CompanyValue {
+  title: string;
+  desc: string;
 }

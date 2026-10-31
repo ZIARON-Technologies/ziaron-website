@@ -37,7 +37,7 @@ Leyenda: `[x]` hecho · `[ ]` pendiente · `[~]` parcial
 ## Fase 4 — Páginas de producto y empresa
 - [~] 20. `/productos/restaurant-os` (hay versión base con módulos reales)
 - [~] 21. `/productos/facturacion` (versión base "próximamente")
-- [~] 22. `/nosotros` (texto real + misión placeholder)
+- [x] 22. `/nosotros` (quiénes somos, misión, visión, 5 valores, filosofía)
 - [~] 23. `/contacto` (aviso honesto: canal aún no definido)
 
 ## Fase 5 — Captación
@@ -66,6 +66,5 @@ Nav: **Productos** (`/#productos`) · **Roadmap** (`/#roadmap`) · **Nosotros** 
 
 ## Decisiones pendientes del usuario
 - Canal de contacto oficial (WhatsApp, correo con dominio).
-- Misión oficial (hoy es texto placeholder).
 - Redes sociales reservadas con el nombre ZIARON.
 - Imágenes/mockups de Restaurant OS para la página del producto.

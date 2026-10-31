@@ -98,7 +98,8 @@ en 2+ lugares va en `shared/components/`; si está en todas las rutas va en
 | `PRODUCTS` | Ecosistema completo (6) → panel Nexus + conteos del hero + texto "+4 plataformas" |
 | `FEATURED_PRODUCTS` | Productos con página propia → home `#productos` y `/productos/facturacion` |
 | `RESTAURANT_OS_MODULES` | `/productos/restaurant-os` (4 capas de módulos de 04-restaurant-os) |
-| `PRINCIPLES` | Home `#como-trabajamos`. **`desc` es propuesta de redacción, validar** |
+| `PRINCIPLES` | Home `#como-trabajamos` (títulos de 06-engineering; `desc` aprobadas por el usuario) |
+| `MISSION`, `VISION`, `COMPANY_VALUES` | `/nosotros`. Fuente oficial: `ziaron-foundation/01-company/README.md` — cambiar en ambos lados |
 | `PHASES` | Home `#roadmap` |
 | `NAV_LINKS`, `PRIMARY_CTA` | Header y menú móvil |
 | `FOOTER_COLUMNS` | Footer. `soon: true` = página que aún no existe → texto "Próximamente", sin link |
@@ -187,10 +188,9 @@ Sufijos clásicos (`.component.ts`, `.service.ts`...) restaurados en
 
 ## Contenido placeholder / honesto (no inventar)
 
-- Misión en `/nosotros`: texto PLACEHOLDER de la v1 hasta tener la oficial.
 - `/contacto`: aviso honesto de que el canal oficial está en preparación. No
   se publica un correo/WhatsApp/formulario que todavía no responde.
-- Footer: "Empresa en constitución"; sin RUC, correo ni redes hasta que existan.
+- Footer: "Empresa en constitución" (aprobado por el usuario; cambiar a razón social + RUC al constituirse); sin correo ni redes hasta que existan.
 - Lista de espera de Restaurant OS: bloque "Próximamente" en `#lista-espera`
   de su página (el formulario real es Fase 5).
 
@@ -204,3 +204,8 @@ Sufijos clásicos (`.component.ts`, `.service.ts`...) restaurados en
   Nexus, productos, principios, roadmap y CTA; páginas base de productos,
   nosotros, contacto y 404. Valores → "Cómo trabajamos" en el home;
   Nosotros/Misión → `/nosotros`; Contacto → `/contacto`.
+- **2026-10-31:** descripciones de principios aprobadas; misión, visión
+  aspiracional y 5 valores de empresa redactados y aprobados (en `/nosotros`
+  y en `ziaron-foundation/01-company`). Valores de empresa ≠ principios de
+  ingeniería: los primeros son cultura (`/nosotros`), los segundos cómo se
+  construye (home `#como-trabajamos`).

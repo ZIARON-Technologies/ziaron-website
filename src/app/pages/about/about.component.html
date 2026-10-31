@@ -4,37 +4,61 @@
   lead="ZIARON Technologies desarrolla plataformas SaaS, inteligencia artificial, automatización e infraestructura cloud desde Lima, Perú."
 />
 
-<section class="page-gutter grid grid-cols-1 gap-12 py-16 sm:py-20 lg:grid-cols-2 lg:gap-16">
-  <div class="flex flex-col gap-6">
-    <app-section-title eyebrow="QUIÉNES SOMOS" title="No somos una consultora" />
-    <div appReveal class="flex max-w-[62ch] flex-col gap-4 text-[15.5px] leading-[1.7] text-text-muted">
-      <p>
-        ZIARON Technologies es una empresa de ingeniería tecnológica enfocada en el desarrollo de
-        plataformas SaaS, inteligencia artificial, automatización e infraestructura cloud.
-      </p>
-      <p>
-        No somos una consultora tradicional ni una fábrica de software a medida. Nuestro objetivo es
-        crear productos propios — plataformas que diseñamos, operamos y escalamos nosotros mismos.
-      </p>
-    </div>
-  </div>
-
-  <!-- PLACEHOLDER: misión genérica (v1). Reemplazar por la oficial. -->
-  <div class="flex flex-col gap-6">
-    <app-section-title eyebrow="MISIÓN" title="Tecnología propia para cada negocio" />
-    <div appReveal class="flex max-w-[62ch] flex-col gap-4 text-[15.5px] leading-[1.7] text-text-muted">
-      <p>
-        Ayudar a las empresas a construir y operar su propia infraestructura tecnológica, en vez de
-        depender de soluciones genéricas que no se adaptan a su negocio.
-      </p>
-      <p>
-        Cada plataforma que desarrollamos está pensada para escalar con la empresa que la usa, no para
-        venderse una sola vez y quedar obsoleta.
-      </p>
-    </div>
+<!-- Quiénes somos -->
+<section class="page-gutter grid grid-cols-1 gap-8 py-16 sm:py-20 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
+  <app-section-title eyebrow="QUIÉNES SOMOS" title="No somos una consultora" />
+  <div appReveal class="flex max-w-[62ch] flex-col gap-4 text-[15.5px] leading-[1.7] text-text-muted sm:text-[16px] lg:pt-8">
+    <p>
+      ZIARON Technologies es una empresa de ingeniería tecnológica enfocada en el desarrollo de
+      plataformas SaaS, inteligencia artificial, automatización e infraestructura cloud.
+    </p>
+    <p>
+      No somos una consultora tradicional ni una fábrica de software a medida. Nuestro objetivo es
+      crear productos propios — plataformas que diseñamos, operamos y escalamos nosotros mismos, y
+      que cualquier negocio puede empezar a usar sin un gran proyecto de implementación.
+    </p>
   </div>
 </section>
 
+<!-- Misión y visión -->
+<section class="page-gutter grid grid-cols-1 gap-4 border-t border-line py-16 sm:gap-5 sm:py-20 lg:grid-cols-2">
+  <article appReveal class="reveal-delay-card-1 relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-accent-border bg-accent-bg p-7 sm:p-9">
+    <span class="font-mono text-[10.5px] tracking-[0.16em] text-accent-text">MISIÓN</span>
+    <p class="font-display text-[20px] font-medium leading-[1.4] tracking-[-0.01em] sm:text-[23px]">{{ mission }}</p>
+  </article>
+  <article appReveal class="reveal-delay-card-2 flex flex-col gap-4 rounded-2xl border border-border bg-bg-elevated p-7 sm:p-9">
+    <span class="font-mono text-[10.5px] tracking-[0.16em] text-text-dim">VISIÓN</span>
+    <p class="font-display text-[20px] font-medium leading-[1.4] tracking-[-0.01em] sm:text-[23px]">{{ vision }}</p>
+  </article>
+</section>
+
+<!-- Valores -->
+<section class="page-gutter flex flex-col gap-8 border-t border-line py-16 sm:gap-10 sm:py-20">
+  <app-section-title
+    eyebrow="VALORES"
+    title="Lo que no negociamos"
+    subtitle="La forma en que trabajamos con clientes, socios y entre nosotros."
+    meta="05 VALORES"
+  />
+  <div class="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-border bg-line sm:grid-cols-2 lg:grid-cols-5">
+    @for (value of values; track value.title; let i = $index) {
+      <div
+        appReveal
+        class="flex flex-col gap-2 bg-bg-elevated p-6"
+        [class.reveal-delay-card-1]="i % 4 === 0"
+        [class.reveal-delay-card-2]="i % 4 === 1"
+        [class.reveal-delay-card-3]="i % 4 === 2"
+        [class.reveal-delay-card-4]="i % 4 === 3"
+      >
+        <span class="font-mono text-[11px] text-accent-text">0{{ i + 1 }}</span>
+        <h3 class="font-display text-[17px] font-medium tracking-[-0.01em]">{{ value.title }}</h3>
+        <p class="text-[14px] leading-[1.6] text-text-muted">{{ value.desc }}</p>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Filosofía -->
 <section class="page-gutter pb-20 sm:pb-24">
   <blockquote appReveal class="flex flex-col gap-4 rounded-2xl border border-border bg-bg-elevated p-8 sm:p-10">
     <span class="font-mono text-[10.5px] tracking-[0.14em] text-accent-text">FILOSOFÍA</span>
@@ -42,7 +66,7 @@
       No desarrollamos únicamente software. <span class="text-text-muted">Diseñamos plataformas inteligentes que impulsan empresas.</span>
     </p>
     <a routerLink="/" fragment="como-trabajamos" class="link-arrow self-start pt-2">
-      Ver nuestros principios
+      Ver nuestros principios de ingeniería
       <svg class="link-arrow__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
     </a>
   </blockquote>

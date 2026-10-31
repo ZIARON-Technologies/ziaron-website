@@ -1,5 +1,6 @@
 import {
   Capability,
+  CompanyValue,
   FeaturedProduct,
   FooterColumn,
   ModuleGroup,
@@ -35,8 +36,8 @@ export const PRODUCTS: ProductNode[] = [
   { id: 'N06', name: 'Developer Platform', status: 'planned', desc: 'Herramientas para construir sobre ZIARON.' },
 ];
 
-/** Títulos: 06-engineering/README.md. `desc`: propuesta de redacción,
- * pendiente de validar con el usuario. */
+/** Títulos: 06-engineering/README.md. `desc`: redacción aprobada por el
+ * usuario (2026-10-31). */
 export const PRINCIPLES: Principle[] = [
   { n: '01', title: 'Arquitectura primero', desc: 'Diseñamos la base antes de escribir la primera pantalla.' },
   { n: '02', title: 'Calidad antes que velocidad', desc: 'Preferimos entregar menos, pero que funcione siempre.' },
@@ -50,6 +51,23 @@ export const PHASES: Phase[] = [
   { n: 'Fase 1', label: 'Fundación', items: ['Branding', 'Fundación de ZIARON', 'Restaurant OS MVP'], active: true },
   { n: 'Fase 2', label: 'Operación', items: ['Facturación', 'Inventario', 'Delivery'], active: false },
   { n: 'Fase 3', label: 'Inteligencia', items: ['IA', 'Automatizaciones', 'Marketplace'], active: false },
+];
+
+/** Identidad de la empresa (página /nosotros). Redactadas y aprobadas el
+ * 2026-10-31; copiadas también en ziaron-foundation/01-company/README.md,
+ * que es la fuente oficial — si cambian, cambiar en ambos lados. */
+export const MISSION =
+  'Crear plataformas tecnológicas propias —SaaS, inteligencia artificial y automatización en la nube— que permitan a los negocios del Perú operar de forma moderna, ordenada y rentable, sin depender de soluciones genéricas ni de grandes inversiones.';
+
+export const VISION =
+  'Ser la empresa peruana de referencia en plataformas inteligentes para negocios, con un ecosistema de productos que impulse a miles de empresas en Latinoamérica.';
+
+export const COMPANY_VALUES: CompanyValue[] = [
+  { title: 'Honestidad', desc: 'Mostramos lo que existe y decimos lo que falta. No prometemos lo que todavía no construimos.' },
+  { title: 'Cercanía', desc: 'Diseñamos junto a negocios reales, escuchando su día a día antes de escribir código.' },
+  { title: 'Excelencia técnica', desc: 'Arquitectura sólida y código mantenible: software que dure años, no meses.' },
+  { title: 'Simplicidad', desc: 'Tecnología potente por dentro y fácil de usar por fuera, para cualquier persona del equipo.' },
+  { title: 'Mejora continua', desc: 'Medimos, aprendemos y evolucionamos cada producto con el uso real de nuestros clientes.' },
 ];
 
 /** Productos con página propia, mostrados en el bloque `#productos` del
