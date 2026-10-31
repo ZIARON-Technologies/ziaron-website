@@ -270,6 +270,11 @@ marca en ambos temas.
 
 ## 8. Assets de marca
 
+**Regla:** isotipo O wordmark, nunca los dos juntos (se lee "Z ZIARON").
+Wordmark: header, footer, imagen OG. Isotipo: favicon, apple-touch-icon,
+loader, panel Nexus, logo cuadrado.
+
+
 Ubicación en el proyecto: `public/brand/logos/` (wordmark SVG light/dark, servidos
 por `HeaderComponent` según `ThemeService.isDark()`). El resto de assets (isotipo,
 favicons, app icons, avatares, social) vive en `branding-assets/` dentro del repo

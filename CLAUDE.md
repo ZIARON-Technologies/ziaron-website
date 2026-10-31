@@ -62,9 +62,10 @@ Search Console y revisión legal.
 `ZiaronTitleStrategy` corre en cada navegación y en el prerender, así el
 HTML estático ya trae: `<title>` ("`<título>` · ZIARON Technologies"; home
 "ZIARON Technologies — ..."), meta description (`data.description`), Open
-Graph + Twitter card (imagen `public/brand/social/og-ziaron.png`, 1200×630,
-renderizada del SVG oficial `ziaron-foundation/branding-assets/06-social/
-open-graph/ziaron-og.svg`), `<link rel="canonical">` y robots
+Graph + Twitter card (imagen `public/brand/social/og-ziaron.png`, 1200×630:
+wordmark + frase de marca sobre el fondo del sitio — NO usar
+`ziaron-foundation/.../open-graph/ziaron-og.svg`, que junta isotipo y
+wordmark, ver "Regla de marca"), `<link rel="canonical">` y robots
 (`data.noindex: true` en el 404). En `index.html`: JSON-LD `Organization`,
 `theme-color` por tema, favicon SVG + apple-touch-icon
 (`public/brand/favicon/`, del branding oficial). `public/robots.txt` y
@@ -194,6 +195,13 @@ Durante el build cada ruta se ejecuta en Node, donde NO existen `window`,
 - **Estados de producto:** `<app-status-pill label tone>` (`accent` = activo,
   `muted` = próximamente).
 - Tema claro/oscuro/auto: `ThemeService` + `ThemeToggleComponent`.
+
+### Regla de marca: isotipo O wordmark, nunca juntos
+
+El isotipo (la Z con nodos) y el wordmark (ZIARON) no van lado a lado: se
+lee "Z ZIARON". Usar uno u otro según el espacio: wordmark en header,
+footer e imagen OG; isotipo solo en favicon, apple-touch-icon, loader,
+panel Nexus y como logo cuadrado (JSON-LD). Pedido explícito del usuario.
 
 ### Trampas conocidas
 
